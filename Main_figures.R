@@ -1,7 +1,19 @@
-## Main figures
+## This file creates Figures 1-4 of the main text of the associated manuscript
+
+## This script requires the following inputs:
+    ## 1. full_met_analysis_data_12_July.csv: not given but can be
+    ## recreated following the steps detailed in the Methods
+    ## 2. param.input.RData: created in Input_parameter_est.R
+    ## 3. bci_met_mxh.RData: created in BCI_met_process.R
+    ## 4. horizontes_met_mxh.RData: created in Horizontes_met_process.R
+    ## 5. Interpolation_mxh_100.RData: created in Sensitivity_met_interpolation.R
+    ## 6. tree_req_future_established_200.RData: created in Supplementary_figures.R
+    ## 7. liana_req_future_established_200.RData: created in Supplementary_figures.R
+    ## 8. tree.NPP.mxh & liana.NPP.mxh: compiled in NPP_models.R
+    ## 9. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
 
 ## Author: AM Willson
-## Date modified: 09 February 2021
+## Date modified: 24 September 2021
 
 library(dplyr)
 library(ggplot2)
@@ -112,6 +124,7 @@ pl3 = data %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
+# Plot together
 extendedga = grid.arrange(pl1, pl2, pl3, nrow = 1)
 
 ggsave(extendedga, filename = 'Plots/extended_hydrotrait.jpeg', width = 11, height = 7, units = 'in')
@@ -447,6 +460,7 @@ for(i in 1:length(dbhs)){
   print(paste('Done with DBH',i,'of',length(dbhs)))
 }
 
+# Format dataframe: 10% liana canopy at BCI
 df1 = cbind(dbhs, liana_out_r1[,2], rep('Liana', times = length(dbhs)))
 colnames(df1) = c('DBH', 'Kreq', 'PFT')
 df1 = rbind(df1, c(mean.hori.data.tree.dbh, tree_out_r1[2], 'Tree'))
@@ -454,7 +468,14 @@ df1 = as.data.frame(df1)
 df1$DBH = as.numeric(as.character(df1$DBH))
 df1$Kreq = as.numeric(as.character(df1$Kreq))
 df1$Kreq = df1$Kreq * 0.001
+df1$sap_area = rep(NA, nrow(df1))
+for(i in 1:nrow(df1)){
+  df1$sap_area[i] = min(((pi*df1$DBH[i]^2) / 4), (2.41 * (df1$DBH[i]/2)^1.97)) #sapwood area in cm^2
+}
+df1$la = c(rep(0.1 * 2 * 100, nrow(df1) - 1), 0.9 * 2 * 100) #leaf area in m^2
+df1$hv = df1$sap_area / df1$la
 
+# Format dataframe: 40% liana canopy at BCI
 df2 = cbind(dbhs, liana_out_r2[,2], rep('Liana', times = length(dbhs)))
 colnames(df2) = c('DBH', 'Kreq', 'PFT')
 df2 = rbind(df2, c(mean.hori.data.tree.dbh, tree_out_r2[2], 'Tree'))
@@ -462,7 +483,14 @@ df2 = as.data.frame(df2)
 df2$DBH = as.numeric(as.character(df2$DBH))
 df2$Kreq = as.numeric(as.character(df2$Kreq))
 df2$Kreq = df2$Kreq * 0.001
+df2$sap_area = rep(NA, nrow(df2))
+for(i in 1:nrow(df2)){
+  df2$sap_area[i] = min(((pi*df2$DBH[i]^2) / 4), (2.41 * (df2$DBH[i]/2)^1.97))
+}
+df2$la = c(rep(2 * 100 * 0.4, nrow(df2) - 1), 2 * 100 * 0.6)
+df2$hv = df2$sap_area / df2$la
 
+# Format dataframe: 10% liana canopy at Horizontes
 df3 = cbind(dbhs, liana_out_r3[,2], rep('Liana', times = length(dbhs)))
 colnames(df3) = c('DBH', 'Kreq', 'PFT')
 df3 = rbind(df3, c(mean.hori.data.tree.dbh, tree_out_r3[2], 'Tree'))
@@ -470,7 +498,14 @@ df3 = as.data.frame(df3)
 df3$DBH = as.numeric(as.character(df3$DBH))
 df3$Kreq = as.numeric(as.character(df3$Kreq))
 df3$Kreq = df3$Kreq * 0.001
+df3$sap_area = rep(NA, nrow(df3))
+for(i in 1:nrow(df3)){
+  df3$sap_area[i] = min(((pi*df3$DBH[i]^2) / 4), (2.41 * (df3$DBH[i]/2)^1.97))
+}
+df3$la = c(rep(2 * 100 * 0.1, nrow(df3) - 1), 2 * 100 * 0.9)
+df3$hv = df3$sap_area / df3$la
 
+# Format dataframe: 40% liana canopy at Horizontes
 df4 = cbind(dbhs, liana_out_r4[,2], rep('Liana', times = length(dbhs)))
 colnames(df4) = c('DBH', 'Kreq', 'PFT')
 df4 = rbind(df4, c(mean.hori.data.tree.dbh, tree_out_r4[2], 'Tree'))
@@ -478,31 +513,27 @@ df4 = as.data.frame(df4)
 df4$DBH = as.numeric(as.character(df4$DBH))
 df4$Kreq = as.numeric(as.character(df4$Kreq))
 df4$Kreq = df4$Kreq * 0.001
+df4$sap_area = rep(NA, nrow(df4))
+for(i in 1:nrow(df4)){
+  df4$sap_area[i] = min(((pi*df4$DBH[i]^2) / 4), (2.41 * (df4$DBH[i]/2)^1.97))
+}
+df4$la = c(rep(2 * 100 * 0.4, nrow(df4) - 1), 2 * 100 * 0.6)
+df4$hv = df4$sap_area / df4$la
 
+# Add ID to each dataframe
 df1 = as.data.frame(cbind(df1, rep(1, nrow(df1))))
-colnames(df1)[4] = 'df'
+colnames(df1)[7] = 'df'
 df2 = as.data.frame(cbind(df2, rep(2, nrow(df2))))
-colnames(df2)[4] = 'df'
+colnames(df2)[7] = 'df'
 df3 = as.data.frame(cbind(df3, rep(3, nrow(df3))))
-colnames(df3)[4] = 'df'
+colnames(df3)[7] = 'df'
 df4 = as.data.frame(cbind(df4, rep(4, nrow(df4))))
-colnames(df4)[4] = 'df'
+colnames(df4)[7] = 'df'
+# Combine
 df = as.data.frame(rbind(df1, df2, df3, df4))
 
-pl_log = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
-  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.2) +
-  geom_point(data = subset(df, PFT == 'Tree'), aes(color = as.factor(df)), size = 2) +
-  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol/m/s/MPa)'))) +
-  scale_color_viridis_d(name = 'Scenario', end = 0.9, labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\n tropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), breaks = c('4', '2', '3', '1')) +
-  facet_grid(~PFT, scales = 'free_x', space = 'free') +
-  scale_x_continuous(expand = c(-0.04, 0.5), breaks = c(1:21)) +
-  theme_linedraw() +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), strip.text = element_text(size = 30))
-pl_log
-
-ggsave(pl_log, filename = 'Plots/allom_hydro_comp_combined_log_200.jpeg', width = 14, height = 8, units = 'in')
-
-pl = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
+# Plot DBH vs Kreq
+p1 = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
   geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.2) +
   geom_hline(data = subset(df, PFT == 'Tree'), aes(yintercept = log(Kreq), color = as.factor(df)), size = 1, linetype = 'dashed') +
   xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol/m/s/MPa)'))) +
@@ -513,8 +544,38 @@ pl = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
                      values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
   theme_linedraw() +
   theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+p1
 
-ggsave(pl, filename = 'Plots/allom_hydro_comp_combined_log_200_dashed.jpeg', width = 14, height = 8, units = 'in')
+# Plot Huber value vs Kreq
+p2 = ggplot(df, aes(x = hv, y = log(Kreq), group = df)) +
+  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.5) +
+  geom_point(data = subset(df, PFT == 'Tree'), aes(color = as.factor(df)), size = 8, shape = 4, stroke = 2, show.legend = F) +
+  xlab(expression(paste('Huber value (c', m^2, '/', m^2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol/m/s/MPa)'))) +
+  scale_color_manual(name = 'Scenario', 
+                     labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
+                     breaks = c('4', '2', '3', '1'),
+                     values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
+  theme_linedraw() +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+p2
+
+# Function to extract legend from ggplot
+get_legend<-function(myggplot){
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+# Save legend to make formatting easier
+leg = get_legend(p2)
+
+# Plot together
+ga = plot_grid(p1 + theme(legend.position = 'none'), 
+               p2 + theme(legend.position = 'none'), 
+               leg, rel_widths = c(2, 2, 1), nrow = 1)
+
+ggsave(ga, filename = 'Plots/allom_hydro_comp_combined_log_200_dashed_hv_dbh.jpeg', width = 14, height = 8, units = 'in')
 
 ##################
 #### Figure 3 ####
@@ -534,12 +595,14 @@ nK = 75000
 
 nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
+# Interpolated VPD & SWP
 VPDs = VPD_interp_100
 SWPs = SWP_interp_100
 
 ################
 ## Tree plots ##
 ################
+# Input values of K
 ks = c(trees_K$K / 10, lianas_K$K)
 Ks = seq(min(ks), max(ks), length.out = nK)
 
@@ -581,13 +644,16 @@ for(vsite in 1:nsite){
   }
 }
 
+# Save first time to be able to load later (long computation time)
 #save(tree.req, file = 'tree.req.100interp.monthly_200.RData')
 
+# Load once completed once and format
 load(file = 'tree.req.100interp.monthly_200.RData')
 tree.req = tree.req * 0.001
 tree_req_melt = melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
+# Contour plot
 ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ksurv)) +
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
@@ -652,6 +718,7 @@ for(vsite in 1:nsite){
   }
 }
 
+# Save and load as before
 #save(liana.req, file = 'liana.req.100interp.monthly_200.RData')
 
 load(file = 'liana.req.100interp.monthly_200.RData')
@@ -659,6 +726,7 @@ liana.req = liana.req * 0.001
 liana_req_melt = melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
+# Contour plot
 ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ksurv)) +
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
@@ -673,6 +741,7 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
 
+# Descriptive plot
 ra4 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv)) +
   geom_blank() +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
@@ -694,9 +763,11 @@ ra4 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv)) +
   theme(plot.margin = unit(c(0, 0, -2, 0), 'cm')) +
   xlab('VPD Index') + ylab(expression(paste(Psi,' Index')))
 
+# Format plots
 ra1_fin = ra1 + theme(legend.position = 'right', plot.margin = unit(c(0, 0, 0, 0), 'cm'))
 ra2_fin = ra2 + theme(legend.position = 'right', plot.margin = unit(c(-1, 0, 1, 0), 'cm'))
 
+# Plot together
 ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3)
 ggsave(ga, filename = 'Plots/tree_liana_concept_final_rb_200.jpeg', height = 20, width = 8, units = 'in')
 
@@ -706,65 +777,204 @@ ggsave(ga, filename = 'Plots/tree_liana_concept_final_rb_200.jpeg', height = 20,
 
 rm(list = ls())
 
-# Load parameters and models
+# Input parameters
 load('param.input.RData')
 
-# Load future Kreq for established scenario
-# These were created for plots in the Supplement
-load('tree_req_future_established_200_wCO2.RData')
-load('liana_req_future_established_200_wCO2.RData')
+# Met drivers
+load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
+H_VPD = VPD
+H_SWP = SWP
+rm(VPD, SWP)
 
-# Convert Ks to mol/m/s/MPa
-tree_K = trees_K$K * 0.001
-liana_K = lianas_K$K * 0.001
+# Indexing months and days
+nmonth = 12
+nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
-# Convert Ks to Kw by dividing by 10
-tree_K = tree_K / 10
-liana_K = liana_K / 10
+nK = 75000
 
-# Make histograms
-pl1 = ggplot() +
-  geom_histogram(aes(x = tree_K), bins = 20) +
-  geom_vline(aes(xintercept = min(tree.req_bci), color = 'Wettest', linetype = 'Present'), size = 1.2) +
-  geom_vline(aes(xintercept = max(tree.req_bci), color = 'Wettest', linetype = 'Future'), size = 1.2) +
-  geom_vline(aes(xintercept = min(tree.req_h), color = 'Driest', linetype = 'Present'), size = 1.2) +
-  geom_vline(aes(xintercept = max(tree.req_h), color = 'Driest', linetype = 'Future'), size = 1.2) +
-  xlab('K (mol/m/s/MPa)') + ylab('Frequency') +
-  scale_color_discrete(name = 'Hydroclimate') +
-  scale_linetype_manual(name = 'Time Period', values = c('Present' = 'solid', 'Future' = 'dashed'), breaks = c('Present', 'Future')) +
-  ggtitle('Tree') +
-  theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(plot.title = element_text(size = 30, hjust = 0.5), axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
-pl1
+# Horizontes future scenarios
+H_VPD_future = array(, dim = c(12, 24, 2))
+H_VPD_future[,,1] = H_VPD
+H_VPD_future[,,2] = H_VPD * 2
 
-pl2 = ggplot() +
-  geom_histogram(aes(x = liana_K), bins = 20) +
-  geom_vline(aes(xintercept = min(liana.req_bci), color = 'Wettest', linetype = 'Present'), size = 1.2) +
-  geom_vline(aes(xintercept = max(liana.req_bci), color = 'Wettest', linetype = 'Future'), size = 1.2) +
-  geom_vline(aes(xintercept = min(liana.req_h), color = 'Driest', linetype = 'Present'), size = 1.2) +
-  geom_vline(aes(xintercept = max(liana.req_h), color = 'Driest', linetype = 'Future'), size = 1.2) +
-  xlab('K (mol/m/s/MPa)') + ylab('Frequency') +
-  scale_color_discrete(name = 'Hydroclimate') +
-  scale_linetype_manual(name = 'Time Period', values = c('Present' = 'solid', 'Future' = 'dashed'), breaks = c('Present', 'Future')) +
-  ggtitle('Liana') +
-  theme_linedraw() +
-  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(plot.title = element_text(size = 30, hjust = 0.5), axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
-pl2
+#### Tree simulation - present day
 
-get_legend<-function(myggplot){
-  tmp <- ggplot_gtable(ggplot_build(myggplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)
+ks = c(trees_K$K / 10, lianas_K$K)
+Ks = seq(min(ks), max(ks), length.out = nK)
+
+tree.req_h = c()
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    Ca = 400
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,1]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_h[1] = K
+    break
+  }
 }
 
-legend = get_legend(pl1)
+#### Liana simulation -- present day
 
-ga = plot_grid(pl1 + theme(legend.position = 'none'), 
-               pl2 + theme(legend.position = 'none'),
-               legend, nrow = 1, rel_widths = c(1, 1, 0.3))
-ga
+liana.req_h = c()
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:12){
+    Ca = 400
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,1]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, b1 = NULL, b2 = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_h[1] = K
+    break
+  }
+}
 
-ggsave(ga, filename = 'Plots/Kreq_Kw_comp_200_wCO2.jpeg', width = 20, height = 12, units = 'in')
+#### Tree simulation -- future scenario
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,2]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_h[2] = K
+    break
+  }
+}
+
+#### Liana simulation -- future scenario
+
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:12){
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,2]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, b1 = NULL, b2 = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_h[2] = K
+    break
+  }
+}
+
+tree.req_h = tree.req_h * 0.001
+liana.req_h = liana.req_h * 0.001
+
+# Make workable dataframes
+liana_kreq = cbind(c('2000', '2100'), 
+                   c(liana.req_h[1], liana.req_h[2]))
+colnames(liana_kreq) = c('Time', 'Kreq')
+
+tree_kreq = cbind(c('2000', '2100'),
+                  c(tree.req_h[1], tree.req_h[2]))
+colnames(tree_kreq) = c('Time', 'Kreq')
+
+# Combine and format dataframes
+comb_kreq = rbind(liana_kreq, tree_kreq)
+comb_kreq = as.data.frame(comb_kreq)
+comb_kreq$growth.form = c('Liana', 'Liana', 
+                          'Tree', 'Tree')
+comb_kreq$Time = as.factor(comb_kreq$Time)
+comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
+comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
+
+# Plot
+ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
+  geom_point(size = 4, show.legend = F) +
+  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+  scale_x_discrete(limits = c('2000', '2100')) +
+  xlab('') + ylab(expression(paste(K[req], ' (mol/m/s/MPa)'))) +
+  scale_color_npg(name = 'PFT') +
+  annotate('segment', x = 0.95, xend = 2.05, y = -30, yend = -30, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
+  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hyrdoclimate', size = 7) +
+  annotate('text', x = '2000', hjust = -1, y = 140, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
+  annotate('text', x = '2000', hjust = -0.45, y = 128, label = expression(bold(paste(Delta, K[req], ' = 47'))), size = 6, angle = 0, color = '#E64B35FF') +
+  annotate('text', x = '2000', hjust = -2.55, y = 24, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
+  annotate('text', x = '2000', hjust = -1.32, y = 12, label = expression(bold(paste(Delta, K[req], ' = 2'))), size = 6, angle = 0, color = '#4DBBD5FF') +
+  coord_cartesian(clip = 'off', ylim = c(-2, 150), xlim = c(1.5, 1.5)) +
+  theme_linedraw() +
+  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
+  theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
+
+ggsave('Plots/Figure4.jpeg', width = 6, height = 6)
