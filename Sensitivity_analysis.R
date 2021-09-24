@@ -9,6 +9,10 @@
 ## Wet hydroclimate + invasion
 ## Dry hydroclimate + invasion
 
+## Note that the model must be recompiled multiple times in this script to allow static parameters
+## from the original model to receive input values
+## This contributes most of the length of the script
+
 ## Author: AM Willson
 ## Date modified: 20 March 2021
 
