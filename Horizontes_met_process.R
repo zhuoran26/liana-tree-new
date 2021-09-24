@@ -12,7 +12,7 @@ library(rhdf5)
 ## VPD ##
 #########
 
-## VPD is an hourly data product from the Medvigy lab met database
+## VPD is an hourly data product from ECMWF reanalysis data product
 ## The input here is the derived product that was processed by D Medvigy
 
 # Get attribute name from file
@@ -54,7 +54,7 @@ hori_VPD_matrix = VPD_fix
 # Convert to Pa
 hori_VPD_matrix = hori_VPD_matrix * 1000
 
-#VPD = hori_VPD_array
+# VPD = hori_VPD_array
 VPD = hori_VPD_matrix
 
 #########
@@ -65,7 +65,11 @@ VPD = hori_VPD_matrix
 data_swp = read.csv('SWP_CostaRica.csv', skip = 1)
 
 # Change column names
-colnames(data_swp) = c('Month', 'D_290_cm', 'D_270_cm', 'D_250_cm', 'D_230_cm', 'D_210_cm', 'D_190_cm', 'D_170_cm', 'D_150_cm', 'D_130_cm', 'D_110_cm', 'D_95_cm', 'D_85_cm', 'D_75_cm', 'D_65_cm', 'D_55_cm', 'D_45_cm', 'D_35_cm', 'D_25_cm', 'D_15_cm', 'D_5_cm')
+colnames(data_swp) = c('Month', 'D_290_cm', 'D_270_cm', 'D_250_cm', 
+                       'D_230_cm', 'D_210_cm', 'D_190_cm', 'D_170_cm', 
+                       'D_150_cm', 'D_130_cm', 'D_110_cm', 'D_95_cm', 
+                       'D_85_cm', 'D_75_cm', 'D_65_cm', 'D_55_cm', 
+                       'D_45_cm', 'D_35_cm', 'D_25_cm', 'D_15_cm', 'D_5_cm')
 
 ## Most water used by woody plants comes in forested settings comes from the top soil layers
 ## Therefore, we are only intrested in SWP from the top layers
