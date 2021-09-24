@@ -72,30 +72,22 @@ dbh.data$DiamMay2018_cm = dbh.data$DiamMay2018_mm * 0.1
 
 # From meta-analysis
 
-# Minimum conductivity for trees
+# Summary statistics for K by growth form
 k.min.tree = min(trees_K$K, na.rm = T)
-# Maximum conductivity for trees
 k.max.tree = max(trees_K$K, na.rm = T)
-# Mean conductivity for trees
 tree.mean.K = mean(trees_K$K, na.rm = T)
-# SD of conductivity for trees
 tree.sd.K = sd(trees_K$K, na.rm = T)
 
-# Minimum conductivity for lianas
 k.min.liana = min(lianas_K$K, na.rm = T)
-# Maximum conductivity for lianas
 k.max.liana = max(lianas_K$K, na.rm = T)
-# Mean conductivity for lianas
 liana.mean.K = mean(lianas_K$K, na.rm = T)
-# SD of conductivity for lianas
 liana.sd.K = sd(lianas_K$K, na.rm = T)
 
-# Mean b1 for trees
+# Summary statistics for remaining hydraulic parameters
+# by growth form and collectively
 b1.mean.tree = mean(trees_K$Slope, na.rm = T)
-# Mean b2 for trees
 b2.mean.tree = mean(trees_K$P50, na.rm = T) 
 
-# Mean b1 for lianas
 b1.mean.liana = mean(lianas_K$Slope, na.rm = T)
 b2.mean.liana = mean(lianas_K$P50, na.rm = T)
 
@@ -116,15 +108,14 @@ hori.data.liana.dbh = hori.data.liana$StemSumDBH_mm
 hori.data.tree.dbh = hori.data.tree.dbh * 0.1
 hori.data.liana.dbh = hori.data.liana.dbh * 0.1
 
-# Mean tree DBH for mature trees at Horizontes
+# Summary statistics for trees
 mean.hori.data.tree.dbh = mean(hori.data.tree.dbh, na.rm = T)
-# Minimum tree DBH for mature trees at Horizontes
 min.hori.data.tree.dbh = min(hori.data.tree.dbh, na.rm = T)
-# Maximum tree DBH for mature trees at Horizontes
 max.hori.data.tree.dbh = max(hori.data.tree.dbh, na.rm = T)
 
-# From liana dataset
+# From liana dataset (separate from tree dataset)
 
+# Summary statistics for liana DBH
 mean.data.liana.dbh = mean(dbh.data$DiamMay2018_cm)
 sd.data.liana.dbh = sd(dbh.data$DiamMay2018_cm)
 med.data.liana.dbh = median(dbh.data$DiamMay2018_cm)
