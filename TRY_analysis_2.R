@@ -10,6 +10,7 @@ library(tidyverse)
 library(data.table)
 
 rm(list = ls())
+
 # Processed TRY data from full_TRY_analysis.R
 data = read.csv('output_9oct.csv')
 
@@ -17,7 +18,8 @@ data = read.csv('output_9oct.csv')
 data = data[,-1]
 
 # Load data with species name and ID numbers
-spp.name = fread('TRY_analysis/Google Drive 2/Medvigy_SP20/liana_model/liana_model/TRY_analysis/Data/7754.txt')
+# Note: this file is not available but can be downloaded from TRY (global species names)
+spp.name = fread('TRY_analysis/Data/7754.txt')
 # Keep only species name and ID number columns and rename
 name.id = spp.name[,c(6:7)]
 colnames(name.id) = c('Species.ID', 'Name')
