@@ -7,10 +7,8 @@
     ## 3. bci_met_mxh.RData: created in BCI_met_process.R
     ## 4. horizontes_met_mxh.RData: created in Horizontes_met_process.R
     ## 5. Interpolation_mxh_100.RData: created in Sensitivity_met_interpolation.R
-    ## 6. tree_req_future_established_200.RData: created in Supplementary_figures.R
-    ## 7. liana_req_future_established_200.RData: created in Supplementary_figures.R
-    ## 8. tree.NPP.mxh & liana.NPP.mxh: compiled in NPP_models.R
-    ## 9. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
+    ## 6. tree.NPP.mxh & liana.NPP.mxh: compiled in NPP_models.R
+    ## 7. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
 
 ## Author: AM Willson
 ## Date modified: 24 September 2021
