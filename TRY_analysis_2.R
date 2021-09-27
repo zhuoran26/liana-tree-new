@@ -3,6 +3,10 @@
 ## The filtered dataframe was then processed
 ## The output of this file is the final matrix of species-averaged trait values in TRY
 
+## This script requires the following inputs:
+    ## 1. output_9oct.csv: not given but created following the steps from TRY_analysis_1.R
+    ## 2. 7754.txt: not given but can be downloaded from the TRY database
+
 ## Author: AM Willson
 ## Date modified: 16 March 2021
 
