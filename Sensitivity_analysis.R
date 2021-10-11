@@ -19237,6 +19237,8 @@ save(tree_table, liana_table, file = 'sensitivity_raw_tables.RData')
 #### Create Tables ####
 #######################
 
+## gt() versions of Supplementary Tables 7 & 8
+
 tree_table_1 = tree_table[1:24,]
 tree_table_2 = tree_table[25:64,]
 tree_table_3 = tree_table[65:100,]
@@ -19257,7 +19259,7 @@ tree_table_1 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/tree_sensitivity_1.png')
+  gtsave(filename = 'Plots/SupplementaryTable7a.png')
 
 tree_table_2 %>% gt() %>%
   fmt_number(columns = vars('Mean', 'Sensitivity'), decimals = 2) %>%
@@ -19273,7 +19275,7 @@ tree_table_2 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/tree_sensitivity_2.png')
+  gtsave(filename = 'Plots/SupplementaryTable7b.png')
 
 tree_table_3 %>% gt() %>%
   fmt_number(columns = vars('Mean', 'Sensitivity'), decimals = 2) %>%
@@ -19289,7 +19291,7 @@ tree_table_3 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/tree_sensitivity_3.png')
+  gtsave(filename = 'Plots/SupplementaryTable7c.png')
 
 
 liana_table_1 = liana_table[1:24,]
@@ -19312,7 +19314,7 @@ liana_table_1 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/liana_sensitivity_1.png')
+  gtsave(filename = 'Plots/SupplementaryTable8a.png')
 
 liana_table_2 %>% gt() %>%
   fmt_number(columns = vars('Mean', 'Sensitivity'), decimals = 2) %>%
@@ -19328,7 +19330,7 @@ liana_table_2 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/liana_sensitivity_2.png')
+  gtsave(filename = 'Plots/SupplementaryTable8b.png')
 
 liana_table_3 %>% gt() %>%
   fmt_number(columns = vars('Mean', 'Sensitivity'), decimals = 2) %>%
@@ -19344,7 +19346,7 @@ liana_table_3 %>% gt() %>%
   tab_style(
     style = cell_fill(color = 'lightyellow'),
     locations = cells_body(rows = Sensitivity > 0.5)) %>%
-  gtsave(filename = 'Plots/liana_sensitivity_3.png')
+  gtsave(filename = 'Plots/SupplementaryTable8c.png')
 
 ########################
 #### Create Figures ####
@@ -19480,11 +19482,15 @@ ga = plot_grid(pl1 + theme(legend.position = 'none', plot.margin = unit(c(15, 15
                pl5 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')), 
                pl6 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')),
                pl7 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')),
-               pl8 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')), nrow = 4)
+               pl8 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')), 
+               nrow = 4,
+               labels = c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'),
+               label_size = 30)
+
 ga2 = plot_grid(ga, legend, nrow = 1, rel_widths = c(0.8, 0.2))
 ga2
 
-ggsave(ga2, filename = 'Plots/tree_sensitivity_hist.jpeg', height = 20, width = 14, units = 'in')
+ggsave(ga2, filename = 'Plots/SupplementaryFigure17.jpeg', height = 20, width = 14, units = 'in')
 
 liana_table$`Hydroclimate Scenario`[which(liana_table$`Hydroclimate Scenario` == 'Horizontes')] = 'Driest'
 liana_table$`Hydroclimate Scenario`[which(liana_table$`Hydroclimate Scenario` == 'BCI')] = 'Wettest'
@@ -19608,8 +19614,12 @@ ga = plot_grid(pl1 + theme(legend.position = 'none', plot.margin = unit(c(15, 15
                pl5 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')),
                pl6 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')),
                pl7 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')),
-               pl8 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')), nrow = 4)
+               pl8 + theme(legend.position = 'none', plot.margin = unit(c(15, 15, 15, 15), 'pt')), 
+               nrow = 4,
+               labels = c('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'),
+               label_size = 30)
+
 ga2 = plot_grid(ga, legend, nrow = 1, rel_widths = c(0.8, 0.2))
 ga2
 
-ggsave(ga2, filename = 'Plots/liana_sensitivity_hist.jpeg', height = 20, width = 14, unit = 'in')
+ggsave(ga2, filename = 'Plots/SupplementaryFigure18.jpeg', height = 20, width = 14, unit = 'in')
