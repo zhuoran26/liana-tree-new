@@ -11,7 +11,7 @@
     ## 7. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
 
 ## Author: AM Willson
-## Date modified: 24 September 2021
+## Date modified: 09 October 2021
 
 library(dplyr)
 library(ggplot2)
@@ -78,15 +78,15 @@ pl1 = data %>%
   dplyr::select(Growth.form, K.mol.m.s.MPa) %>%
   ggplot(aes(x = Growth.form, y = K.mol.m.s.MPa, fill = Growth.form)) +
   geom_violin(alpha = 0.5, show.legend = F) +
-  stat_summary(fun = median, geom = 'point', shape = 3, show.legend = F, stroke = 1.2, size = 2) +
+  stat_summary(fun = median, geom = 'point', shape = 3, show.legend = F, size = 1.5) +
   theme_linedraw() +
-  xlab('') + ylab(expression(paste(K[s],' (mol/m/s/MPa)'))) +
+  xlab('') + ylab(expression(paste(K[s],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_fill_npg(name = 'PFT') +
   scale_x_discrete(labels = c('Liana\nn = 51', 'Tree\nn = 103')) +
   ggtitle('Hydraulic conductivity') +
-  theme(plot.title = element_text(hjust = 0.5, size = 20), 
-        axis.title = element_text(size = 18), 
-        axis.text = element_text(size = 15),
+  theme(plot.title = element_text(hjust = 0.5, size = 12), 
+        axis.title = element_text(size = 12), 
+        axis.text = element_text(size = 8),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
@@ -94,15 +94,15 @@ pl2 = data %>%
   dplyr::select(Growth.form, P50) %>%
   ggplot(aes(x = Growth.form, y = P50, fill = Growth.form)) +
   geom_violin(alpha = 0.5, show.legend = F) +
-  stat_summary(fun = median, geom = 'point', show.legend = F, shape = 3, stroke = 1.2, size = 2) +
+  stat_summary(fun = median, geom = 'point', show.legend = F, shape = 3, size = 1.5) +
   theme_linedraw() +
   xlab('') + ylab(expression(paste(P[50],' (MPa)'))) +
   scale_fill_npg(name = 'PFT') +
   scale_x_discrete(labels = c('Liana\nn = 40', 'Tree\nn = 60')) +
   ggtitle(expression(P[50])) +
-  theme(plot.title = element_text(hjust = 0.5, size = 20), 
-        axis.title = element_text(size = 18), 
-        axis.text = element_text(size = 15),
+  theme(plot.title = element_text(hjust = 0.5, size = 12), 
+        axis.title = element_text(size = 12), 
+        axis.text = element_text(size = 8),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
@@ -110,27 +110,32 @@ pl3 = data %>%
   dplyr::select(Growth.form, Slope) %>%
   ggplot(aes(x = Growth.form, y = Slope, fill = Growth.form)) +
   geom_violin(alpha = 0.5, show.legend = F) +
-  stat_summary(fun = median, geom = 'point', show.legend = F, shape = 3, stroke = 1.2, size = 2) +
+  stat_summary(fun = median, geom = 'point', show.legend = F, shape = 3, size = 1.5) +
   theme_linedraw() +
-  xlab('') + ylab('Slope (%/MPa)') +
+  xlab('') + ylab(expression(paste('Slope (% MP', a^-1, ')'))) +
   scale_fill_npg(name = 'PFT') +
   scale_x_discrete(labels = c('Liana\nn = 8', 'Tree\nn = 13')) +
   ggtitle('Slope of PLC curve') +
-  theme(plot.title = element_text(hjust = 0.5, size = 20), 
-        axis.title = element_text(size = 18), 
-        axis.text = element_text(size = 15),
+  theme(plot.title = element_text(hjust = 0.5, size = 12), 
+        axis.title = element_text(size = 12), 
+        axis.text = element_text(size = 8),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
 # Plot together
-extendedga = grid.arrange(pl1, pl2, pl3, nrow = 1)
+extendedga = plot_grid(pl1, pl2, pl3, nrow = 1,
+                       labels = c('A', 'B', 'C'),
+                       label_size = 12, hjust = -1)
 
-ggsave(extendedga, filename = 'Plots/extended_hydrotrait.jpeg', width = 11, height = 7, units = 'in')
+ggsave(extendedga, filename = 'Plots/Figure1.jpeg', 
+       width = 180, height = 70, units = 'mm', dpi = 300)
 
 ##################
 #### Figure 2 ####
 ##################
 
+## Before running this section, you must compile tree.NPP.mxh
+## & liana.NPP.mxh from NPP_models.R
 rm(list = ls())
 
 # Load parameters
@@ -532,29 +537,28 @@ df = as.data.frame(rbind(df1, df2, df3, df4))
 
 # Plot DBH vs Kreq
 p1 = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
-  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.2) +
+  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
   geom_hline(data = subset(df, PFT == 'Tree'), aes(yintercept = log(Kreq), color = as.factor(df)), size = 1, linetype = 'dashed') +
-  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol/m/s/MPa)'))) +
-  #scale_color_viridis_d(name = 'Scenario', end = 0.9, labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), breaks = c('4', '2', '3', '1')) +
+  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
                      breaks = c('4', '2', '3', '1'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
 p1
 
 # Plot Huber value vs Kreq
 p2 = ggplot(df, aes(x = hv, y = log(Kreq), group = df)) +
-  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.5) +
-  geom_point(data = subset(df, PFT == 'Tree'), aes(color = as.factor(df)), size = 8, shape = 4, stroke = 2, show.legend = F) +
-  xlab(expression(paste('Huber value (c', m^2, '/', m^2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol/m/s/MPa)'))) +
+  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
+  geom_point(data = subset(df, PFT == 'Tree'), aes(color = as.factor(df)), size = 4, shape = 4, stroke = 1, show.legend = F) +
+  xlab(expression(paste('Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
                      breaks = c('4', '2', '3', '1'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
 p2
 
 # Function to extract legend from ggplot
@@ -571,13 +575,20 @@ leg = get_legend(p2)
 # Plot together
 ga = plot_grid(p1 + theme(legend.position = 'none'), 
                p2 + theme(legend.position = 'none'), 
-               leg, rel_widths = c(2, 2, 1), nrow = 1)
+               leg, nrow = 1, 
+               rel_widths = c(2, 2, 1),
+               labels = c('A', 'B', ''),
+               label_size = 12)
 
-ggsave(ga, filename = 'Plots/allom_hydro_comp_combined_log_200_dashed_hv_dbh.jpeg', width = 14, height = 8, units = 'in')
+ggsave(ga, filename = 'Plots/Figure2.jpeg', 
+       width = 175, height = 70, units = 'mm', dpi = 300)
 
 ##################
 #### Figure 3 ####
 ##################
+
+## Before running this section, you must compile tree.NPP.mxh
+## & liana.NPP.mxh from NPP_models.R
 
 rm(list = ls())
 
@@ -662,9 +673,9 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.5, vjust = -0.4))
 ra1
 
 #################
@@ -734,9 +745,9 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.5, vjust = -0.4))
 ra2
 
 # Descriptive plot
@@ -744,20 +755,20 @@ ra4 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv)) +
   geom_blank() +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank(), panel.grid.major = element_blank()) +
   geom_segment(aes(x = 10, y = 7, xend = 100, yend = 7)) +
   geom_segment(aes(x = 10, y = 7, xend = 100, yend = 7), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 50, y = 11, label = 'Increasing VPD'), size = 10) +
+  geom_text(aes(x = 50, y = 11, label = 'Increasing VPD'), size = 2.5) +
   geom_segment(aes(x = 7, y = 10, xend = 7, yend = 100)) +
   geom_segment(aes(x = 7, y = 10, xend = 7, yend = 100), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 12, y = 50, label = paste('Decreasing ~~ Psi')), parse = T, angle = 90, size = 10) +
-  geom_label(aes(x = 24, y = 92, label = 'Dry soil'), size = 10, fill = NA) +
-  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 10, fill = NA) +
-  geom_label(aes(x = 80, y = 92, label = 'Driest site'), size = 10, fill = NA) +
+  geom_text(aes(x = 12, y = 50, label = paste('Decreasing ~~ Psi')), parse = T, angle = 90, size = 2.5) +
+  geom_label(aes(x = 30, y = 92, label = 'Dry soil'), size = 2.5, fill = NA) +
+  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 2.5, fill = NA) +
+  geom_label(aes(x = 80, y = 92, label = 'Driest site'), size = 2.5, fill = NA) +
   geom_segment(aes(x = 8, y = 8, xend = 80, yend = 80)) +
   geom_segment(aes(x = 8, y = 8, xend = 80, yend = 80), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 46, y = 51, label = 'Increasing dryness'), angle = 45, size = 10) +
+  geom_text(aes(x = 46, y = 51, label = 'Increasing dryness'), angle = 45, size = 2.5) +
   theme(plot.margin = unit(c(0, 0, -2, 0), 'cm')) +
   xlab('VPD Index') + ylab(expression(paste(Psi,' Index')))
 
@@ -766,12 +777,18 @@ ra1_fin = ra1 + theme(legend.position = 'right', plot.margin = unit(c(0, 0, 0, 0
 ra2_fin = ra2 + theme(legend.position = 'right', plot.margin = unit(c(-1, 0, 1, 0), 'cm'))
 
 # Plot together
-ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3)
-ggsave(ga, filename = 'Plots/tree_liana_concept_final_rb_200.jpeg', height = 20, width = 8, units = 'in')
+ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3,
+               labels = c('A', 'B', 'C'),
+               label_size = 12)
+
+ggsave(ga, filename = 'Plots/Figure3.jpeg', height = 180, width = 80, units = 'mm', dpi = 300)
 
 ##################
 #### Figure 4 ####
 ##################
+
+## Before running this section, you must compile tree.NPP.mxh.ca
+## & liana.NPP.mxh.ca from NPP_models_wCO2.R
 
 rm(list = ls())
 
@@ -961,18 +978,18 @@ ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.fo
   geom_point(size = 4, show.legend = F) +
   geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol/m/s/MPa)'))) +
+  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_npg(name = 'PFT') +
   annotate('segment', x = 0.95, xend = 2.05, y = -30, yend = -30, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 140, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 128, label = expression(bold(paste(Delta, K[req], ' = 47'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 24, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 12, label = expression(bold(paste(Delta, K[req], ' = 2'))), size = 6, angle = 0, color = '#4DBBD5FF') +
+  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hyrdoclimate', size = 4) +
+  annotate('text', x = '2000', hjust = -1, y = 140, label = 'Liana', size = 4, angle = 0, color = '#E64B35FF', fontface = 2) +
+  annotate('text', x = '2000', hjust = -0.61, y = 128, label = expression(bold(paste(Delta, K[req], ' = 47'))), size = 3, angle = 0, color = '#E64B35FF') +
+  annotate('text', x = '2000', hjust = -2.55, y = 24, label = 'Tree', size = 4, angle = 0, color = '#4DBBD5FF', fontface = 2) +
+  annotate('text', x = '2000', hjust = -1.6, y = 12, label = expression(bold(paste(Delta, K[req], ' = 2'))), size = 3, angle = 0, color = '#4DBBD5FF') +
   coord_cartesian(clip = 'off', ylim = c(-2, 150), xlim = c(1.5, 1.5)) +
   theme_linedraw() +
   theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 12), axis.text = element_text(size = 8), legend.title = element_text(size = 12), legend.text = element_text(size = 8)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
-ggsave('Plots/Figure4.jpeg', width = 6, height = 6)
+ggsave('Plots/Figure4.jpeg', width = 88, height = 88, units = 'mm', dpi = 300)
