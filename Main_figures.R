@@ -463,7 +463,6 @@ for(i in 1:length(dbhs)){
   print(paste('Done with DBH',i,'of',length(dbhs)))
 }
 
-# Format dataframe: 10% liana canopy at BCI
 df1 = cbind(dbhs, liana_out_r1[,2], rep('Liana', times = length(dbhs)))
 colnames(df1) = c('DBH', 'Kreq', 'PFT')
 df1 = rbind(df1, c(mean.hori.data.tree.dbh, tree_out_r1[2], 'Tree'))
@@ -478,7 +477,6 @@ for(i in 1:nrow(df1)){
 df1$la = c(rep(0.1 * 2 * 100, nrow(df1) - 1), 0.9 * 2 * 100) #leaf area in m^2
 df1$hv = df1$sap_area / df1$la
 
-# Format dataframe: 40% liana canopy at BCI
 df2 = cbind(dbhs, liana_out_r2[,2], rep('Liana', times = length(dbhs)))
 colnames(df2) = c('DBH', 'Kreq', 'PFT')
 df2 = rbind(df2, c(mean.hori.data.tree.dbh, tree_out_r2[2], 'Tree'))
@@ -493,7 +491,6 @@ for(i in 1:nrow(df2)){
 df2$la = c(rep(2 * 100 * 0.4, nrow(df2) - 1), 2 * 100 * 0.6)
 df2$hv = df2$sap_area / df2$la
 
-# Format dataframe: 10% liana canopy at Horizontes
 df3 = cbind(dbhs, liana_out_r3[,2], rep('Liana', times = length(dbhs)))
 colnames(df3) = c('DBH', 'Kreq', 'PFT')
 df3 = rbind(df3, c(mean.hori.data.tree.dbh, tree_out_r3[2], 'Tree'))
@@ -508,7 +505,6 @@ for(i in 1:nrow(df3)){
 df3$la = c(rep(2 * 100 * 0.1, nrow(df3) - 1), 2 * 100 * 0.9)
 df3$hv = df3$sap_area / df3$la
 
-# Format dataframe: 40% liana canopy at Horizontes
 df4 = cbind(dbhs, liana_out_r4[,2], rep('Liana', times = length(dbhs)))
 colnames(df4) = c('DBH', 'Kreq', 'PFT')
 df4 = rbind(df4, c(mean.hori.data.tree.dbh, tree_out_r4[2], 'Tree'))
@@ -523,7 +519,6 @@ for(i in 1:nrow(df4)){
 df4$la = c(rep(2 * 100 * 0.4, nrow(df4) - 1), 2 * 100 * 0.6)
 df4$hv = df4$sap_area / df4$la
 
-# Add ID to each dataframe
 df1 = as.data.frame(cbind(df1, rep(1, nrow(df1))))
 colnames(df1)[7] = 'df'
 df2 = as.data.frame(cbind(df2, rep(2, nrow(df2))))
@@ -532,36 +527,69 @@ df3 = as.data.frame(cbind(df3, rep(3, nrow(df3))))
 colnames(df3)[7] = 'df'
 df4 = as.data.frame(cbind(df4, rep(4, nrow(df4))))
 colnames(df4)[7] = 'df'
-# Combine
 df = as.data.frame(rbind(df1, df2, df3, df4))
 
-# Plot DBH vs Kreq
-p1 = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
-  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
-  geom_hline(data = subset(df, PFT == 'Tree'), aes(yintercept = log(Kreq), color = as.factor(df)), size = 1, linetype = 'dashed') +
-  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+df_new = df
+df_new$ratio = NA
+
+# Dividing liana Kreq by the reference scenario tree Kreq
+
+for(i in 1:nrow(df_new)){
+  if(df_new$df[i] == 1 & df_new$PFT[i] == 'Liana'){
+    df_new$ratio[i] = df_new$Kreq[i] / df_new$Kreq[51]
+  }
+  if(df_new$df[i] == 2 & df_new$PFT[i] == 'Liana'){
+    df_new$ratio[i] = df_new$Kreq[i] / df_new$Kreq[102]
+  }
+  if(df_new$df[i] == 3 & df_new$PFT[i] == 'Liana'){
+    df_new$ratio[i] = df_new$Kreq[i] / df_new$Kreq[153]
+  }
+  if(df_new$df[i] == 4 & df_new$PFT[i] == 'Liana'){
+    df_new$ratio[i] = df_new$Kreq[i] / df_new$Kreq[204]
+  }
+}
+
+df_est = df %>%
+  subset(df %in% c(2, 4))
+
+p1 = ggplot(df_est, aes(x = DBH, y = log(Kreq), group = df)) +
+  geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
+  xlab('Liana DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
-                     labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
-                     breaks = c('4', '2', '3', '1'),
-                     values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
+                     labels = c('2' = '\n40% liana\ntropical moist\n', '4' = '\n40% liana\ntropical dry\n'), 
+                     breaks = c('4', '2'),
+                     values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
   theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
 p1
 
-# Plot Huber value vs Kreq
-p2 = ggplot(df, aes(x = hv, y = log(Kreq), group = df)) +
-  geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
-  geom_point(data = subset(df, PFT == 'Tree'), aes(color = as.factor(df)), size = 4, shape = 4, stroke = 1, show.legend = F) +
-  xlab(expression(paste('Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+p2 = ggplot(df_est, aes(x = hv, y = log(Kreq), group = df)) +
+  geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
+  xlab(expression(paste('Liana Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
-                     labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
-                     breaks = c('4', '2', '3', '1'),
-                     values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
+                     labels = c('2' = '\n40% liana\ntropical moist\n', '4' = '\n40% liana\ntropical dry\n'), 
+                     breaks = c('4', '2'),
+                     values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
   theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
 p2
 
-# Function to extract legend from ggplot
+df_new_est = df_new %>%
+  subset(df %in% c(2, 4))
+
+p3 = ggplot(df_new_est, aes(x = hv, y = ratio, group = df)) +
+  geom_line(data = subset(df_new_est, PFT == 'Liana'), aes(color = as.factor(df), linetype = as.factor(df)), size = 1) +
+  xlab(expression(paste('Liana Huber value c', m^2, ' ', m^-2, ')'))) + ylab(expression(frac(paste('Liana ', K[req]), paste('Tree ', K[req])))) +
+  scale_color_manual(name = 'Hydrocliamte Scenario', 
+                     labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
+                     breaks = c('4', '2'),
+                     values = c('4' = '#a6611a', '2' = '#80cdc1')) +
+  scale_linetype_manual(values = c('4' = 'dashed', '2' = 'solid')) +
+  guides(linetype = 'none') +
+  theme_linedraw() +
+  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
+p3
+
 get_legend<-function(myggplot){
   tmp <- ggplot_gtable(ggplot_build(myggplot))
   leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
@@ -569,19 +597,18 @@ get_legend<-function(myggplot){
   return(legend)
 }
 
-# Save legend to make formatting easier
 leg = get_legend(p2)
 
-# Plot together
-ga = plot_grid(p1 + theme(legend.position = 'none'), 
+pg = plot_grid(p1 + theme(legend.position = 'none'), 
                p2 + theme(legend.position = 'none'), 
-               leg, nrow = 1, 
-               rel_widths = c(2, 2, 1),
-               labels = c('A', 'B', ''),
+               p3 + theme(legend.position = 'none'), 
+               leg, nrow = 1,
+               rel_widths = c(2, 2, 2, 1),
+               labels = c('A', 'B', 'C', ''),
                label_size = 12)
+pg
 
-ggsave(ga, filename = 'Plots/Figure2.jpeg', 
-       width = 175, height = 70, units = 'mm', dpi = 300)
+ggsave(pg, filename = 'Plots/Figure2.jpeg', height = 80, width = 180, units = 'mm', dpi = 300)
 
 ##################
 #### Figure 3 ####
