@@ -4347,7 +4347,7 @@ p1 = ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = grow
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_npg(name = 'PFT') +
-  ggtitle(expression(paste('Total canopy = 150', m^2))) +
+  ggtitle(expression(paste('Total leaf area = 150', m^2))) +
   annotate('segment', x = 0.95, xend = 2.05, y = -25, yend = -25, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
   annotate('text', x = '2000', hjust = -0.23, y = -32, label = 'Drying hyrdoclimate', size = 7) +
   annotate('text', x = '2000', hjust = -1, y = 110, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
@@ -4543,7 +4543,7 @@ p2 = ggplot(comb_kreq_2, aes(x = Time, y = Kreq, color = growth.form, group = gr
   geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  ggtitle(expression(paste('Total canopy = 400', m^2))) +
+  ggtitle(expression(paste('Total leaf area = 400', m^2))) +
   scale_color_npg(name = 'PFT') +
   annotate('segment', x = 0.95, xend = 2.05, y = -70, yend = -70, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
   annotate('text', x = '2000', hjust = -0.23, y = -90, label = 'Drying hyrdoclimate', size = 7) +
@@ -4775,7 +4775,7 @@ p1 = ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = grow
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_npg(name = 'PFT') +
-  ggtitle(expression(paste('Total canopy = 150', m^2))) +
+  ggtitle(expression(paste('Total leaf area = 150', m^2))) +
   annotate('segment', x = 0.95, xend = 2.05, y = -18, yend = -18, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
   annotate('text', x = '2000', hjust = -0.23, y = -22, label = 'Drying hyrdoclimate', size = 7) +
   annotate('text', x = '2000', hjust = -1, y = 52, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
@@ -4971,7 +4971,7 @@ p2 = ggplot(comb_kreq_2, aes(x = Time, y = Kreq, color = growth.form, group = gr
   geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  ggtitle(expression(paste('Total canopy = 400', m^2))) +
+  ggtitle(expression(paste('Total leaf area = 400', m^2))) +
   scale_color_npg(name = 'PFT') +
   annotate('segment', x = 0.95, xend = 2.05, y = -35, yend = -35, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
   annotate('text', x = '2000', hjust = -0.23, y = -45, label = 'Drying hyrdoclimate', size = 7) +
