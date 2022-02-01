@@ -560,7 +560,7 @@ p1 = ggplot(df_est, aes(x = DBH, y = log(Kreq), group = df)) +
                      breaks = c('4', '2'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 9), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 9, hjust = 0.5), panel.grid = element_blank())
 p1
 
 p2 = ggplot(df_est, aes(x = hv, y = log(Kreq), group = df)) +
@@ -571,7 +571,7 @@ p2 = ggplot(df_est, aes(x = hv, y = log(Kreq), group = df)) +
                      breaks = c('4', '2'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 9), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 9, hjust = 0.5), panel.grid = element_blank())
 p2
 
 df_new_est = df_new %>%
@@ -587,7 +587,7 @@ p3 = ggplot(df_new_est, aes(x = hv, y = ratio, group = df)) +
   scale_linetype_manual(values = c('4' = 'dashed', '2' = 'solid')) +
   guides(linetype = 'none') +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 11), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 11, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 9), axis.text = element_text(size = 8), legend.text = element_text(size = 8), legend.title = element_text(size = 9, hjust = 0.5), panel.grid = element_blank())
 p3
 
 get_legend<-function(myggplot){
@@ -1008,7 +1008,7 @@ ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.fo
   xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_npg(name = 'PFT') +
   annotate('segment', x = 0.95, xend = 2.05, y = -30, yend = -30, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hyrdoclimate', size = 4) +
+  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hydroclimate', size = 4) +
   annotate('text', x = '2000', hjust = -1, y = 140, label = 'Liana', size = 4, angle = 0, color = '#E64B35FF', fontface = 2) +
   annotate('text', x = '2000', hjust = -0.61, y = 128, label = expression(bold(paste(Delta, K[req], ' = 47'))), size = 3, angle = 0, color = '#E64B35FF') +
   annotate('text', x = '2000', hjust = -2.55, y = 24, label = 'Tree', size = 4, angle = 0, color = '#4DBBD5FF', fontface = 2) +
