@@ -556,7 +556,7 @@ p1 = ggplot(df_est, aes(x = DBH, y = log(Kreq), group = df)) +
   geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
   xlab('Liana DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
-                     labels = c('2' = '\n40% liana\ntropical moist\n', '4' = '\n40% liana\ntropical dry\n'), 
+                     labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
                      breaks = c('4', '2'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
@@ -567,7 +567,7 @@ p2 = ggplot(df_est, aes(x = hv, y = log(Kreq), group = df)) +
   geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
   xlab(expression(paste('Liana Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
-                     labels = c('2' = '\n40% liana\ntropical moist\n', '4' = '\n40% liana\ntropical dry\n'), 
+                     labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
                      breaks = c('4', '2'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1')) +
   theme_linedraw() +
