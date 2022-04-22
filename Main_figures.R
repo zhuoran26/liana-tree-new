@@ -703,8 +703,10 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 9), legend.text = element_text(size = 8), axis.text = element_text(size = 10)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 14, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 10), legend.text = element_text(size = 10), 
+        axis.text = element_text(size = 10)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
 ra1
 
@@ -775,8 +777,9 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 9), legend.text = element_text(size = 8), axis.text = element_text(size = 10)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 14, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 10), legend.text = element_text(size = 10), axis.text = element_text(size = 10)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
 ra2
 
@@ -810,9 +813,9 @@ ra2_fin = ra2 + theme(legend.position = 'right', plot.margin = unit(c(-1, 0, 1, 
 # Plot together
 ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3,
                labels = c('A', 'B', 'C'),
-               label_size = 12)
+               label_size = 24)
 
-ggsave(ga, filename = 'Plots/Figure3.jpeg', dpi = 300)#, height = 180, width = 80, units = 'mm', dpi = 300)
+ggsave(ga, filename = 'Plots/Figure3.jpeg', dpi = 300, height = 10.8, width = 4.5, units = 'in')
 
 ##################
 #### Figure 4 ####
