@@ -23,6 +23,7 @@ library(DescTools)
 library(gridExtra)
 library(directlabels)
 library(raster)
+library(geomtextpath)
 
 ##################
 #### Figure 1 ####
