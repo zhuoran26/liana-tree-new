@@ -80,7 +80,7 @@ pl1 = data %>%
   geom_violin(alpha = 0.5, show.legend = F) +
   stat_summary(fun = median, geom = 'point', shape = 3, show.legend = F, size = 1.5) +
   theme_linedraw() +
-  xlab('') + ylab(expression(paste(K[s],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('') + ylab((bquote(K['s,max']~(mol~m^-1~s^-1~MPa^-1)))) +
   scale_fill_npg(name = 'PFT') +
   scale_x_discrete(labels = c('Liana\nn = 51', 'Tree\nn = 103')) +
   ggtitle('Hydraulic conductivity') +
@@ -554,7 +554,8 @@ df_est = df %>%
 
 p1 = ggplot(df_est, aes(x = DBH, y = log(Kreq), group = df)) +
   geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
-  xlab('Liana DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Liana DBH (cm)') + ylab(bquote(log(K['w,max'](req))~~(mol~m^-1~s^-1~MPa^-1))) +
+  #xlab('Liana DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
                      breaks = c('4', '2'),
@@ -565,7 +566,8 @@ p1
 
 p2 = ggplot(df_est, aes(x = hv, y = log(Kreq), group = df)) +
   geom_line(data = subset(df_est, PFT == 'Liana'), aes(color = as.factor(df)), size = 1) +
-  xlab(expression(paste('Liana Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab(bquote('Liana Huber value'~(cm^2~m^-2))) + ylab(bquote(log(K['w,max'](req))~~(mol~m^-1~s^-1~MPa^-1))) +
+  #xlab(expression(paste('Liana Huber value (c', m^2, ' ', m^-2, ')'))) + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
                      breaks = c('4', '2'),
@@ -579,7 +581,8 @@ df_new_est = df_new %>%
 
 p3 = ggplot(df_new_est, aes(x = hv, y = ratio, group = df)) +
   geom_line(data = subset(df_new_est, PFT == 'Liana'), aes(color = as.factor(df), linetype = as.factor(df)), size = 1) +
-  xlab(expression(paste('Liana Huber value c', m^2, ' ', m^-2, ')'))) + ylab(expression(frac(paste('Liana ', K[req]), paste('Tree ', K[req])))) +
+  xlab(bquote('Liana Huber value'~(cm^2~m^-2))) + ylab(expression(frac('Liana'~K['w,max'](req),'Tree'~K['w,max'](req)))) +
+  #xlab(expression(paste('Liana Huber value c', m^2, ' ', m^-2, ')'))) + ylab(expression(frac(paste('Liana ', K[req]), paste('Tree ', K[req])))) +
   scale_color_manual(name = 'Hydrocliamte Scenario', 
                      labels = c('2' = 'Tropical Moist', '4' = 'Tropical Dry'), 
                      breaks = c('4', '2'),
@@ -695,14 +698,14 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 9), legend.text = element_text(size = 8), axis.text = element_text(size = 10)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.5, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
 ra1
 
 #################
@@ -768,36 +771,37 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
+  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 9), legend.text = element_text(size = 8), axis.text = element_text(size = 10)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.5, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
 ra2
 
 # Descriptive plot
-ra4 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv)) +
+ra4 = ggplot() +
   geom_blank() +
-  coord_fixed(ratio = 1, ylim = c(0, 103)) +
+  coord_fixed(ratio = 1, ylim = c(0, 103), xlim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 12), plot.title = element_text(size = 12, hjust = 0.5), legend.title = element_text(size = 12), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank(), panel.grid.major = element_blank()) +
-  geom_segment(aes(x = 10, y = 7, xend = 100, yend = 7)) +
-  geom_segment(aes(x = 10, y = 7, xend = 100, yend = 7), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 50, y = 11, label = 'Increasing VPD'), size = 2.5) +
-  geom_segment(aes(x = 7, y = 10, xend = 7, yend = 100)) +
-  geom_segment(aes(x = 7, y = 10, xend = 7, yend = 100), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 12, y = 50, label = paste('Decreasing ~~ Psi')), parse = T, angle = 90, size = 2.5) +
-  geom_label(aes(x = 30, y = 92, label = 'Dry soil'), size = 2.5, fill = NA) +
-  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 2.5, fill = NA) +
-  geom_label(aes(x = 80, y = 92, label = 'Driest site'), size = 2.5, fill = NA) +
-  geom_segment(aes(x = 8, y = 8, xend = 80, yend = 80)) +
-  geom_segment(aes(x = 8, y = 8, xend = 80, yend = 80), arrow = arrow(length = unit(0.25, 'cm'))) +
-  geom_text(aes(x = 46, y = 51, label = 'Increasing dryness'), angle = 45, size = 2.5) +
-  theme(plot.margin = unit(c(0, 0, -2, 0), 'cm')) +
-  xlab('VPD Index') + ylab(expression(paste(Psi,' Index')))
+  theme(panel.border = element_blank(), panel.grid = element_blank(), legend.position = 'none') +
+  geom_textsegment(aes(x = 0, y = 0, xend = 100, yend = 0,
+                       label = 'Increasing VPD', size = 14),
+                   linewidth = 2,
+                   arrow = arrow(length = unit(0.25, 'cm'))) +
+  geom_textsegment(aes(x = 0, y = 0, xend = 0, yend = 100,
+                       label = 'Decreasing ~~ Psi', size = 14),
+                   parse = T, linewidth = 2,
+                   arrow = arrow(length = unit(0.25, 'cm'))) +
+  geom_textsegment(aes(x = 0, y = 0, xend = 90, yend = 90,
+                       label = 'Increasing Dryness', size = 14),
+                   linewidth = 2,
+                   arrow = arrow(length = unit(0.25, 'cm'))) +
+  xlab('VPD Index') + ylab(expression(paste(Psi,' Index'))) +
+  geom_label(aes(x = 30, y = 92, label = 'Dry soil'), size = 5, fill = NA) +
+  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 5, fill = NA) +
+  theme(axis.title = element_text(size = 12), axis.text = element_text(size = 10))
 
 # Format plots
 ra1_fin = ra1 + theme(legend.position = 'right', plot.margin = unit(c(0, 0, 0, 0), 'cm'))
@@ -808,7 +812,7 @@ ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3,
                labels = c('A', 'B', 'C'),
                label_size = 12)
 
-ggsave(ga, filename = 'Plots/Figure3.jpeg', height = 180, width = 80, units = 'mm', dpi = 300)
+ggsave(ga, filename = 'Plots/Figure3.jpeg', dpi = 300)#, height = 180, width = 80, units = 'mm', dpi = 300)
 
 ##################
 #### Figure 4 ####
@@ -1001,22 +1005,28 @@ comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
 comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
 
 # Plot
-ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+ggplot() +
+  geom_point(aes(x = liana_kreq$Time, y = liana_kreq$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = liana_kreq$Time, y = liana_kreq$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  scale_color_npg(name = 'PFT') +
-  annotate('segment', x = 0.95, xend = 2.05, y = -30, yend = -30, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -40, label = 'Drying hydroclimate', size = 4) +
-  annotate('text', x = '2000', hjust = -1, y = 140, label = 'Liana', size = 4, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.61, y = 128, label = expression(bold(paste(Delta, K[req], ' = 47'))), size = 3, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 24, label = 'Tree', size = 4, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.6, y = 12, label = expression(bold(paste(Delta, K[req], ' = 2'))), size = 3, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 150), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -35, yend = -35,
+                       label = 'Drying Hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 12), axis.text = element_text(size = 8), legend.title = element_text(size = 12), legend.text = element_text(size = 8)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 150), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
 ggsave('Plots/Figure4.jpeg', width = 88, height = 88, units = 'mm', dpi = 300)
