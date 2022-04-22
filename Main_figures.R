@@ -799,7 +799,7 @@ ra4 = ggplot() +
                    parse = T, linewidth = 2,
                    arrow = arrow(length = unit(0.25, 'cm'))) +
   geom_textsegment(aes(x = 0, y = 0, xend = 90, yend = 90,
-                       label = 'Increasing Dryness', size = 14),
+                       label = 'Increasing dryness', size = 14),
                    linewidth = 2,
                    arrow = arrow(length = unit(0.25, 'cm'))) +
   xlab('VPD Index') + ylab(expression(paste(Psi,' Index'))) +
@@ -999,14 +999,13 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h[1], tree.req_h[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq = rbind(liana_kreq, tree_kreq)
-comb_kreq = as.data.frame(comb_kreq)
-comb_kreq$growth.form = c('Liana', 'Liana', 
-                          'Tree', 'Tree')
-comb_kreq$Time = as.factor(comb_kreq$Time)
-comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
-comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
+# Format dataframes
+liana_kreq = as.data.frame(liana_kreq)
+tree_kreq = as.data.frame(tree_kreq)
+liana_kreq$Time = as.factor(liana_kreq$Time)
+tree_kreq$Time = as.factor(tree_kreq$Time)
+liana_kreq$Kreq = as.numeric(liana_kreq$Kreq)
+tree_kreq$Kreq = as.numeric(tree_kreq$Kreq)
 
 # Plot
 ggplot() +
@@ -1014,17 +1013,17 @@ ggplot() +
              size = 4, show.legend = F) +
   geom_point(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree'),
              size = 4, show.legend = F) +
-  geom_textline(aes(x = liana_kreq$Time, y = liana_kreq$Kreq, color = 'Liana',
+  geom_textline(aes(x = as.numeric(liana_kreq$Time), y = liana_kreq$Kreq, color = 'Liana',
                     label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
-  geom_textline(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree',
+  geom_textline(aes(x = as.numeric(tree_kreq$Time), y = tree_kreq$Kreq, color = 'Tree',
                     label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   scale_color_npg() +
   geom_textsegment(aes(x = 0.95, xend = 2.05, y = -35, yend = -35,
-                       label = 'Drying Hydroclimate'),
+                       label = 'Drying hydroclimate'),
                    arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
   coord_cartesian(clip = 'off', ylim = c(-2, 150), xlim = c(1.5, 1.5)) +
