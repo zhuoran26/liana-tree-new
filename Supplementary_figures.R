@@ -31,6 +31,7 @@ library(pracma)
 library(reshape2)
 library(cowplot)
 library(DescTools)
+library(geomtextpath)
 
 #####################################
 #### Part 1: Inputs & parameters ####
@@ -236,11 +237,11 @@ pl1 = ggplot() +
   geom_smooth(aes(x = hydro_data$log_K, y = hydro_data$log_P50), color = 'black', method = 'lm', se = F, size = 1.2) +
   geom_smooth(aes(x = tree_hydro$log_K, y = tree_hydro$log_P50, color = tree_hydro$Growth.form), method = 'lm', se = F, size = 1.2) +
   geom_smooth(aes(x = liana_hydro$log_K, y = liana_hydro$log_P50, color = liana_hydro$Growth.form), method = 'lm', se = F, size = 1.2) +
-  xlab(expression(paste('log(K) (mmol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) + ylab(expression(paste('log(-',P[50],') (MPa)'))) +
+  xlab(bquote(log(K['w,max'](req))~~(mmol~m^-1~s^-1~MPa^-1))) + ylab(expression(paste('log(-',P[50],') (MPa)'))) +
   ggtitle('Hydraulic efficiency vs. safety') +
   theme_linedraw() +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 23), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -277,11 +278,11 @@ pl2 = ggplot() +
   geom_smooth(aes(x = hydro_data$log_K, y = hydro_data$log_slope), color = 'black', method = 'lm', se = F, size = 1.2) +
   geom_smooth(aes(x = tree_hydro$log_K, y = tree_hydro$log_slope, color = tree_hydro$Growth.form), method = 'lm', se = F, size = 1.2) +
   geom_smooth(aes(x = liana_hydro$log_K, y = liana_hydro$log_slope, color = liana_hydro$Growth.form), method = 'lm', se = F, size = 1.2) +
-  xlab(expression(paste('log(K) (mmol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) + ylab(expression(paste('log(Slope) (% MP', a^-1, ')'))) +
+  xlab(bquote(log(K['w,max'](req))~~(mmol~m^-1~s^-1~MPa^-1))) + ylab(expression(paste('log(Slope) (% MPa', a^-1, ')'))) +
   ggtitle('Hydraulic efficiency vs. slope') +
   theme_linedraw() +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 23), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -321,7 +322,7 @@ pl3 = ggplot() +
   ggtitle('Hydraulic safety vs. slope') +
   theme_linedraw() +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 23), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -708,7 +709,7 @@ pld = TRY %>%
   geom_violin(alpha = 0.5, show.legend = F) +
   stat_summary(fun = median, geom = 'point', show.legend = F, shape = 3, size = 2, stroke = 1.2) +
   theme_minimal() +
-  xlab('') + ylab(expression(paste('Conductivity (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('') + ylab(bquote(K['s,max']~~(mol~m^-1~s^-1~MPa^-1))) +
   scale_fill_npg(name = 'PFT') +
   scale_x_discrete(labels = c('Liana\nn = 18', 'Tree\nn = 400')) +
   theme(axis.title.y = element_text(size = 10.5), axis.text = element_text(size = 15))
@@ -1579,7 +1580,8 @@ liana_melt$Ks = liana_melt$Ks * 0.001
 plot = liana_melt %>%
   ggplot(aes(x = Ks, y = NPP, group = as.factor(DBH), color = as.factor(DBH))) +
   geom_line(size = 1.2) +
-  xlab(expression(paste(K[w],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1,')'))) + ylab(expression(paste('NPP (kg C yea', r^-1,')'))) +
+  xlab(bquote(K['w,max']~~(mol~m^-1~s^-1~MPa^-1))) + ylab(expression(paste('NPP (kg C year', r^-1,')'))) +
+  #xlab(expression(paste(K[w],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1,')'))) + ylab(expression(paste('NPP (kg C yea', r^-1,')'))) +
   geom_vline(aes(xintercept = liana_melt$Ks[which(liana_melt$DBH == 2) & liana_melt$NPP == min(abs(liana_melt$NPP[which(liana_melt$DBH == 2)]))], linetype = 'Kreq')) +
   geom_vline(aes(xintercept = liana_melt$Ks[which(liana_melt$DBH == 6) & liana_melt$NPP == min(abs(liana_melt$NPP[which(liana_melt$DBH == 6)]))], linetype = 'Kreq')) +
   scale_linetype_manual(name = element_blank(), values = c('Kreq' = 'dashed'), labels = expression(K[req])) +
@@ -1700,12 +1702,14 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 1), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(4, 12, by = 1)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 1)) +
   scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(4, 12, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(2, 12, by = 1), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra1
@@ -1772,11 +1776,13 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 10)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 10), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(10, 90, by = 10), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
@@ -1785,9 +1791,9 @@ ra2
 ga_fin = plot_grid(ra1, ra2, 
                    nrow = 1, rel_widths = 1,
                    labels = c('A', 'B'),
-                   label_size = 30)
+                   label_size = 24)
 
-ggsave(ga_fin, filename = 'Plots/SupplementaryFigure10.jpeg', height = 12, width = 20, units = 'in')
+ggsave(ga_fin, filename = 'Plots/SupplementaryFigure10.jpeg', width = 12, height = 7, units = 'in')
 
 ##################################
 #### Part 9: Future scenarios ####
@@ -1946,12 +1952,12 @@ pl1 = ggplot() +
   geom_point(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.3) +
   geom_line(aes(x = mult, y = tree.req_bci, color = 'Wettest'), size = 1.2) +
   geom_line(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.2) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Tree') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 26), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -2066,12 +2072,12 @@ pl2 = ggplot() +
   geom_point(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.3) +
   geom_line(aes(x = mult, y = liana.req_bci, color = 'Wettest'), size = 1.2) +
   geom_line(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.2) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Liana') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 26), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -2207,12 +2213,12 @@ pl1 = ggplot() +
   geom_point(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.3) +
   geom_line(aes(x = mult, y = tree.req_bci, color = 'Wettest'), size = 1.2) +
   geom_line(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.2) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Tree') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 26), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -2327,12 +2333,12 @@ pl2 = ggplot() +
   geom_point(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.3) +
   geom_line(aes(x = mult, y = liana.req_bci, color = 'Wettest'), size = 1.2) +
   geom_line(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.2) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Liana') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28),
+        axis.title = element_text(size = 26),
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -2549,35 +2555,41 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h[1], tree.req_h[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq = rbind(liana_kreq, tree_kreq)
-comb_kreq = as.data.frame(comb_kreq)
-comb_kreq$growth.form = c('Liana', 'Liana', 
-                          'Tree', 'Tree')
-comb_kreq$Time = as.factor(comb_kreq$Time)
-comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
-comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
+# Format dataframes
+liana_kreq = as.data.frame(liana_kreq)
+tree_kreq = as.data.frame(tree_kreq)
+liana_kreq$Time = as.factor(liana_kreq$Time)
+tree_kreq$Time = as.factor(tree_kreq$Time)
+liana_kreq$Kreq = as.numeric(liana_kreq$Kreq)
+tree_kreq$Kreq = as.numeric(tree_kreq$Kreq)
 
 # Plot
-ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+# Plot
+ggplot() +
+  geom_point(aes(x = liana_kreq$Time, y = liana_kreq$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = as.numeric(liana_kreq$Time), y = liana_kreq$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  21')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = as.numeric(tree_kreq$Time), y = tree_kreq$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  3')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  scale_color_npg(name = 'PFT') +
-  annotate('segment', x = 0.95, xend = 2.05, y = -20, yend = -20, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -24, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 65, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 58, label = expression(bold(paste(Delta, K[req], ' = 21'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 18, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 11, label = expression(bold(paste(Delta, K[req], ' = 3'))), size = 6, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 75), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -20, yend = -20,
+                       label = 'Drying hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 75), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
-ggsave('SupplementaryFigure3.jpeg', width = 6, height = 6)
+ggsave('Plots/SupplementaryFigure3.jpeg', width = 88, height = 88, units = 'mm')
 
 ##########################################
 #### Part 11: Canopy area sensitivity ####
@@ -2986,14 +2998,14 @@ df = as.data.frame(rbind(df1, df2, df3, df4))
 pl = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
   geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.2) +
   geom_hline(data = subset(df, PFT == 'Tree'), aes(yintercept = log(Kreq), color = as.factor(df)), size = 1, linetype = 'dashed') +
-  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('DBH (cm)') + ylab(bquote(log(K['w,max'](req))~~(mol~m^-1~s^-1~MPa^-1))) +
   #scale_color_viridis_d(name = 'Scenario', end = 0.9, labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), breaks = c('4', '2', '3', '1')) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
                      breaks = c('4', '2', '3', '1'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 26), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
 
 pl = plot_grid(pl, nrow = 1,
                labels = c('A'),
@@ -3403,14 +3415,14 @@ df = as.data.frame(rbind(df1, df2, df3, df4))
 pl = ggplot(df, aes(x = DBH, y = log(Kreq), group = df)) +
   geom_line(data = subset(df, PFT == 'Liana'), aes(color = as.factor(df)), size = 1.2) +
   geom_hline(data = subset(df, PFT == 'Tree'), aes(yintercept = log(Kreq), color = as.factor(df)), size = 1, linetype = 'dashed') +
-  xlab('DBH (cm)') + ylab(expression(paste('log(',K[req],')',' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('DBH (cm)') + ylab(bquote(log(K['w,max'](req))~~(mol~m^-1~s^-1~MPa^-1))) +
   #scale_color_viridis_d(name = 'Scenario', end = 0.9, labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), breaks = c('4', '2', '3', '1')) +
   scale_color_manual(name = 'Scenario', 
                      labels = c('1' = '\n10% liana\ntropical moist', '2' = '\n40% liana\ntropical moist\n', '3' = '\n10% liana\ntropical dry\n', '4' = '\n40% liana\ntropical dry\n'), 
                      breaks = c('4', '2', '3', '1'),
                      values = c('4' = '#a6611a', '2' = '#80cdc1', '3' = '#dfc27d', '1' = '#018571')) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
+  theme(axis.title = element_text(size = 26), axis.text = element_text(size = 26), legend.text = element_text(size = 26), legend.title = element_text(size = 28, hjust = 0.5), panel.grid = element_blank())
 
 pl = plot_grid(pl,
                nrow = 1,
@@ -3512,13 +3524,15 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra1
 
@@ -3582,12 +3596,14 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
 
@@ -3600,9 +3616,9 @@ ga = plot_grid(ra1_fin, ra2_fin,
                nrow = 1,
                align = 'hv', axis = 'tbrl',
                labels = c('A', 'B'),
-               label_size = 30)
+               label_size = 24)
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure12a.jpeg', height = 8, width = 14, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure12a.jpeg', height = 7, width = 12, units = 'in')
 
 #########################
 ## Established: 400 m2 ##
@@ -3689,13 +3705,15 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra1
 
@@ -3762,12 +3780,14 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(30, 210, by = 60)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 60)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
 
@@ -3780,7 +3800,7 @@ ga = plot_grid(ra1_fin, ra2_fin,
                nrow = 1,
                align = 'hv', axis = 'tbrl',
                labels = c('C', 'D'),
-               label_size = 30)
+               label_size = 24)
 
 ggsave(ga, filename = 'Plots/SupplementaryFigure12b.jpeg', height = 8, width = 14, units = 'in')
 
@@ -3872,13 +3892,15 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 1), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(2, 12, by = 1), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra1
 
@@ -3942,12 +3964,14 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 5)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 5), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(10, 90, by = 5), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
 
@@ -3956,7 +3980,7 @@ ga_fin = plot_grid(ra1, ra2,
                    nrow = 1, 
                    rel_widths = 1,
                    labels = c('A', 'B'),
-                   label_size = 30)
+                   label_size = 24)
 
 ggsave(ga_fin, filename = 'Plots/SupplementaryFigure13a.jpeg', height = 8, width = 14, units = 'in')
 
@@ -4046,13 +4070,15 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 2), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 2), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_color_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
+  scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(2, 12, by = 2), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra1
 
@@ -4116,12 +4142,14 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 10)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 10), show.legend = F) +
   xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
-  scale_fill_distiller(name = expression(K[req]), palette = 'BuGn', breaks = seq(10, 90, by = 20)) +
+  scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 20)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), legend.title = element_text(size = 28), legend.text = element_text(size = 26), axis.text = element_text(size = 26)) +
-  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
+        axis.text = element_text(size = 26)) +
+  theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
   geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(10, 90, by = 10), method = list('top.pieces', color = 'black', cex = 1.8, vjust = -0.4))
 ra2
 
@@ -4130,7 +4158,7 @@ ga_fin = plot_grid(ra1, ra2,
                    nrow = 1, 
                    rel_widths = 1,
                    labels = c('C', 'D'),
-                   label_size = 30)
+                   label_size = 24)
 
 ggsave(ga_fin, filename = 'Plots/SupplementaryFigure13b.jpeg', height = 8, width = 14, units = 'in')
 
@@ -4331,34 +4359,37 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h[1], tree.req_h[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq = rbind(liana_kreq, tree_kreq)
-comb_kreq = as.data.frame(comb_kreq)
-comb_kreq$growth.form = c('Liana', 'Liana', 
-                          'Tree', 'Tree')
-comb_kreq$Time = as.factor(comb_kreq$Time)
-comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
-comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
+# Format dataframes
+liana_kreq_1 = as.data.frame(liana_kreq)
+tree_kreq_1 = as.data.frame(tree_kreq)
+liana_kreq_1$Time = as.factor(liana_kreq_1$Time)
+tree_kreq_1$Time = as.factor(tree_kreq_1$Time)
+liana_kreq_1$Kreq = as.numeric(liana_kreq_1$Kreq)
+tree_kreq_1$Kreq = as.numeric(tree_kreq_1$Kreq)
 
 # Plot
-p1 = ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+p1 = ggplot() +
+  geom_point(aes(x = liana_kreq_1$Time, y = liana_kreq_1$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq_1$Time, y = tree_kreq_1$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = as.numeric(liana_kreq_1$Time), y = liana_kreq_1$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  35')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = as.numeric(tree_kreq_1$Time), y = tree_kreq_1$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  1')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  scale_color_npg(name = 'PFT') +
-  ggtitle(expression(paste('Total leaf area = 150', m^2))) +
-  annotate('segment', x = 0.95, xend = 2.05, y = -25, yend = -25, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -32, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 110, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 98, label = expression(bold(paste(Delta, K[req], ' = 35'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 22, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 10, label = expression(bold(paste(Delta, K[req], ' = 1'))), size = 6, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 120), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -25, yend = -25,
+                       label = 'Drying hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
-  theme(plot.title = element_text(size = 28, hjust = 0.5)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 120), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 p1
 
@@ -4528,43 +4559,46 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h_2[1], tree.req_h_2[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq_2 = rbind(liana_kreq, tree_kreq)
-comb_kreq_2 = as.data.frame(comb_kreq_2)
-comb_kreq_2$growth.form = c('Liana', 'Liana', 
-                            'Tree', 'Tree')
-comb_kreq_2$Time = as.factor(comb_kreq_2$Time)
-comb_kreq_2$Kreq = as.numeric(comb_kreq_2$Kreq)
-comb_kreq_2$growth.form = as.factor(comb_kreq_2$growth.form)
+# Format dataframes
+liana_kreq_2 = as.data.frame(liana_kreq)
+tree_kreq_2 = as.data.frame(tree_kreq)
+liana_kreq_2$Time = as.factor(liana_kreq_2$Time)
+tree_kreq_2$Time = as.factor(tree_kreq_2$Time)
+liana_kreq_2$Kreq = as.numeric(liana_kreq_2$Kreq)
+tree_kreq_2$Kreq = as.numeric(tree_kreq_2$Kreq)
 
 # Plot
-p2 = ggplot(comb_kreq_2, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+p2 = ggplot() +
+  geom_point(aes(x = liana_kreq_2$Time, y = liana_kreq_2$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq_2$Time, y = tree_kreq_2$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = as.numeric(liana_kreq_2$Time), y = liana_kreq_2$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  92')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = as.numeric(tree_kreq_2$Time), y = tree_kreq_2$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  4')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  ggtitle(expression(paste('Total leaf area = 400', m^2))) +
-  scale_color_npg(name = 'PFT') +
-  annotate('segment', x = 0.95, xend = 2.05, y = -70, yend = -70, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -90, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 285, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 255, label = expression(bold(paste(Delta, K[req], ' = 92'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 55, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 25, label = expression(bold(paste(Delta, K[req], ' = 4'))), size = 6, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 320), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -65, yend = -65,
+                       label = 'Drying hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
-  theme(plot.title = element_text(size = 28, hjust = 0.5)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 320), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 p2
 
 # Plot together
 ga = plot_grid(p1, p2,
                labels = c('A', 'B'),
-               label_size = 30)
+               label_size = 24)
 
-ggsave(plot = ga, 'Plots/SupplementaryFigure14.jpeg', width = 12, height = 6)
+ggsave(plot = ga, 'Plots/SupplementaryFigure14.jpeg', width = 8, height = 4)
 
 #########################################
 ## Kreq-Kw comparison: 150 m2 invasion ##
@@ -4759,34 +4793,37 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h[1], tree.req_h[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq = rbind(liana_kreq, tree_kreq)
-comb_kreq = as.data.frame(comb_kreq)
-comb_kreq$growth.form = c('Liana', 'Liana', 
-                          'Tree', 'Tree')
-comb_kreq$Time = as.factor(comb_kreq$Time)
-comb_kreq$Kreq = as.numeric(comb_kreq$Kreq)
-comb_kreq$growth.form = as.factor(comb_kreq$growth.form)
+# Format dataframes
+liana_kreq_1 = as.data.frame(liana_kreq)
+tree_kreq_1 = as.data.frame(tree_kreq)
+liana_kreq_1$Time = as.factor(liana_kreq_1$Time)
+tree_kreq_1$Time = as.factor(tree_kreq_1$Time)
+liana_kreq_1$Kreq = as.numeric(liana_kreq_1$Kreq)
+tree_kreq_1$Kreq = as.numeric(tree_kreq_1$Kreq)
 
 # Plot
-p1 = ggplot(comb_kreq, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+p1 = ggplot() +
+  geom_point(aes(x = liana_kreq_1$Time, y = liana_kreq_1$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq_1$Time, y = tree_kreq_1$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = as.numeric(liana_kreq_1$Time), y = liana_kreq_1$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = as.numeric(tree_kreq_1$Time), y = tree_kreq_1$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  scale_color_npg(name = 'PFT') +
-  ggtitle(expression(paste('Total leaf area = 150', m^2))) +
-  annotate('segment', x = 0.95, xend = 2.05, y = -18, yend = -18, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -22, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 52, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 45, label = expression(bold(paste(Delta, K[req], ' = 16'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 15, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 9, label = expression(bold(paste(Delta, K[req], ' = 2'))), size = 6, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 60), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -15, yend = -15,
+                       label = 'Drying hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
-  theme(plot.title = element_text(size = 28, hjust = 0.5)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 60), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 p1
 
@@ -4956,43 +4993,46 @@ tree_kreq = cbind(c('2000', '2100'),
                   c(tree.req_h_2[1], tree.req_h_2[2]))
 colnames(tree_kreq) = c('Time', 'Kreq')
 
-# Combine and format dataframes
-comb_kreq_2 = rbind(liana_kreq, tree_kreq)
-comb_kreq_2 = as.data.frame(comb_kreq_2)
-comb_kreq_2$growth.form = c('Liana', 'Liana', 
-                            'Tree', 'Tree')
-comb_kreq_2$Time = as.factor(comb_kreq_2$Time)
-comb_kreq_2$Kreq = as.numeric(comb_kreq_2$Kreq)
-comb_kreq_2$growth.form = as.factor(comb_kreq_2$growth.form)
+# Format dataframes
+liana_kreq_2 = as.data.frame(liana_kreq)
+tree_kreq_2 = as.data.frame(tree_kreq)
+liana_kreq_2$Time = as.factor(liana_kreq_2$Time)
+tree_kreq_2$Time = as.factor(tree_kreq_2$Time)
+liana_kreq_2$Kreq = as.numeric(liana_kreq_2$Kreq)
+tree_kreq_2$Kreq = as.numeric(tree_kreq_2$Kreq)
 
 # Plot
-p2 = ggplot(comb_kreq_2, aes(x = Time, y = Kreq, color = growth.form, group = growth.form)) +
-  geom_point(size = 4, show.legend = F) +
-  geom_line(size = 1.5, show.legend = F, alpha = 0.7) +
+p2 = ggplot() +
+  geom_point(aes(x = liana_kreq_2$Time, y = liana_kreq_2$Kreq, color = 'Liana'),
+             size = 4, show.legend = F) +
+  geom_point(aes(x = tree_kreq_2$Time, y = tree_kreq_2$Kreq, color = 'Tree'),
+             size = 4, show.legend = F) +
+  geom_textline(aes(x = as.numeric(liana_kreq_2$Time), y = liana_kreq_2$Kreq, color = 'Liana',
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
+  geom_textline(aes(x = as.numeric(tree_kreq_2$Time), y = tree_kreq_2$Kreq, color = 'Tree',
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
+                parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
-  xlab('') + ylab(expression(paste(K[req], ' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
-  ggtitle(expression(paste('Total leaf area = 400', m^2))) +
-  scale_color_npg(name = 'PFT') +
-  annotate('segment', x = 0.95, xend = 2.05, y = -35, yend = -35, arrow = arrow(length = unit(0.4, 'cm')), size = 1.5) +
-  annotate('text', x = '2000', hjust = -0.23, y = -45, label = 'Drying hyrdoclimate', size = 7) +
-  annotate('text', x = '2000', hjust = -1, y = 130, label = 'Liana', size = 7, angle = 0, color = '#E64B35FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -0.45, y = 115, label = expression(bold(paste(Delta, K[req], ' = 41'))), size = 6, angle = 0, color = '#E64B35FF') +
-  annotate('text', x = '2000', hjust = -2.55, y = 37, label = 'Tree', size = 7, angle = 0, color = '#4DBBD5FF', fontface = 2) +
-  annotate('text', x = '2000', hjust = -1.32, y = 22, label = expression(bold(paste(Delta, K[req], ' = 5'))), size = 6, angle = 0, color = '#4DBBD5FF') +
-  coord_cartesian(clip = 'off', ylim = c(-2, 140), xlim = c(1.5, 1.5)) +
+  xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  scale_color_npg() +
+  geom_textsegment(aes(x = 0.95, xend = 2.05, y = -32, yend = -32,
+                       label = 'Drying hydroclimate'),
+                   arrow = arrow(length = unit(0.4, 'cm')), linewidth = 1.5, size = 3) +
   theme_linedraw() +
-  theme(legend.key.height = unit(1.5, "cm"), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26)) +
-  theme(plot.title = element_text(size = 28, hjust = 0.5)) +
+  coord_cartesian(clip = 'off', ylim = c(-2, 140), xlim = c(1.5, 1.5)) +
+  theme(legend.key.height = unit(1.5, 'cm'), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 10), axis.text = element_text(size = 10), 
+        legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 p2
 
 # Plot together
 ga = plot_grid(p1, p2,
                labels = c('A', 'B'),
-               label_size = 30)
+               label_size = 24)
 
-ggsave(plot = ga, 'Plots/SupplementaryFigure15.jpeg', width = 12, height = 6)
+ggsave(plot = ga, 'Plots/SupplementaryFigure15.jpeg', width = 8, height = 4)
 
 ########################
 #### P50 Adaptation ####
@@ -5543,12 +5583,12 @@ pl1 = ggplot() +
   geom_point(aes(x = mult[11], y = tree.req_h_adap_2.5, color = 'Driest'), shape = 18, size = 5, show.legend = F) + 
   geom_point(aes(x = mult[11], y = tree.req_bci_adap_3, color = 'Wettest'), shape = 15, size = 4, show.legend = F) +
   geom_point(aes(x = mult[11], y = tree.req_h_adap_3, color = 'Driest'), shape = 15, size = 4, show.legend = F) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Tree') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 26), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -5647,12 +5687,12 @@ pl2 = ggplot() +
   geom_point(aes(x = mult[11], y = liana.req_h_adap_2.5, color = 'Driest'), shape = 18, size = 5, show.legend = F) +
   geom_point(aes(x = mult[11], y = liana.req_bci_adap_3, color = 'Wettest'), shape = 15, size = 4, show.legend = F) +
   geom_point(aes(x = mult[11], y = liana.req_h_adap_3, color = 'Driest'), shape = 15, size = 4, show.legend = F) +
-  xlab('Increase from present') + ylab(expression(paste(K[req],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1, ')'))) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
   theme_linedraw() +
   scale_color_npg(name = 'Site') +
   ggtitle('Liana') +
   theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 28), 
+        axis.title = element_text(size = 26), 
         axis.text = element_text(size = 26), 
         legend.title = element_text(size = 28), 
         legend.text = element_text(size = 26),
@@ -5674,6 +5714,6 @@ ga = plot_grid(pl1 + theme(legend.position = 'none'),
                legend, nrow = 1, 
                rel_widths = c(2.3, 2.3, 0.7),
                labels = c('A', 'B', ''),
-               label_size = 30)
+               label_size = 24)
 
 ggsave(ga, filename = 'Plots/SupplementaryFigure16.jpeg', width = 16, height = 8, units = 'in')
