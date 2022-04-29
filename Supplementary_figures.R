@@ -416,7 +416,7 @@ H_SWP = SWP
 pl1 = ggplot() +
   geom_line(aes(x = c(1:12), y = BCI_SWP, color = 'BCI'), size = 1.2) +
   geom_line(aes(x = c(1:12), y = H_SWP, color = 'Horizontes'), size = 1.2) +
-  xlab('Month') + ylab(expression(paste(Psi,' (MPa)'))) +
+  xlab('Month') + ylab(expression(paste(italic('\U03A8'),' (MPa)'))) +
   scale_x_continuous(breaks = seq(1, 12, 1)) +
   theme_linedraw() +
   scale_color_discrete(name = 'Site') +
@@ -1584,7 +1584,7 @@ plot = liana_melt %>%
   #xlab(expression(paste(K[w],' (mol ', m^-1, ' ', s^-1, ' MP', a^-1,')'))) + ylab(expression(paste('NPP (kg C yea', r^-1,')'))) +
   geom_vline(aes(xintercept = liana_melt$Ks[which(liana_melt$DBH == 2) & liana_melt$NPP == min(abs(liana_melt$NPP[which(liana_melt$DBH == 2)]))], linetype = 'Kreq')) +
   geom_vline(aes(xintercept = liana_melt$Ks[which(liana_melt$DBH == 6) & liana_melt$NPP == min(abs(liana_melt$NPP[which(liana_melt$DBH == 6)]))], linetype = 'Kreq')) +
-  scale_linetype_manual(name = element_blank(), values = c('Kreq' = 'dashed'), labels = expression(K[req])) +
+  scale_linetype_manual(name = element_blank(), values = c('Kreq' = 'dashed'), labels = bquote(K['w,max'](req))) +
   scale_color_npg(name = 'DBH (cm)') +
   theme(axis.title = element_text(size = 28), axis.text = element_text(size = 25), legend.text = element_text(size = 25), legend.title = element_text(size = 28)) +
   guides(color = guide_legend(reverse = T)) +
@@ -1701,13 +1701,13 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 1), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 1)) +
   scale_fill_distiller(name = expression(K[req]), palette = 'PuBu', breaks = seq(4, 12, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
@@ -1775,12 +1775,12 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 10)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 10), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid.minor = element_blank()) +
@@ -3523,13 +3523,13 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -3595,12 +3595,12 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -3704,13 +3704,13 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -3779,12 +3779,12 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 60)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -3891,13 +3891,13 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 1), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(2, 12, by = 1)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -3963,12 +3963,12 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 5)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 5), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 10)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -4069,13 +4069,13 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(2, 12, by = 2), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(2, 12, by = 2), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(4, 12, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
@@ -4141,12 +4141,12 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(10, 90, by = 10)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(10, 90, by = 10), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(10, 90, by = 20)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 28), plot.title = element_text(size = 30, hjust = 0.5), 
         legend.title = element_text(size = 28), legend.text = element_text(size = 26), 
         axis.text = element_text(size = 26)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +

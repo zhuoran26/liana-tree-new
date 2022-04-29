@@ -707,17 +707,17 @@ ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ks
   geom_raster(interpolate = T, show.legend = F) +
   geom_contour(alpha = 0, aes(color = ..level..), breaks = seq(0, 10, by = 1), show.legend = T) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(0, 10, by = 1), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_color_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'PuBu', breaks = seq(0, 10, by = 2)) +
   ggtitle('Tree') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 9), plot.title = element_text(size = 10, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 9), plot.title = element_text(size = 12, hjust = 0.5), 
         legend.title = element_text(size = 9), legend.text = element_text(size = 8), 
         axis.text = element_text(size = 8)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(0, 10, by = 1), method = list('top.pieces', color = 'black', cex = 0.8, vjust = -0.4))
 ra1
 
 #################
@@ -782,15 +782,15 @@ ra2 = ggplot(liana_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = K
   geom_raster(interpolate = T, show.legend = T) +
   geom_contour(alpha = 0, aes(color = ..level..), show.legend = F, breaks = seq(30, 210, by = 20)) +
   geom_contour(alpha = 0.65, color = 'black', breaks = seq(30, 210, by = 20), show.legend = F) +
-  xlab('VPD index') + ylab(expression(paste(Psi,' index'))) +
+  xlab('VPD index') + ylab(expression(paste(italic('\U03A8'),' index'))) +
   scale_fill_distiller(name = bquote(K['w,max'](req)), palette = 'BuGn', breaks = seq(30, 210, by = 30)) +
   ggtitle('Liana') +
   coord_fixed(ratio = 1, ylim = c(0, 103)) +
   theme_linedraw() +
-  theme(axis.title = element_text(size = 9), plot.title = element_text(size = 10, hjust = 0.5, face = 'bold'), 
+  theme(axis.title = element_text(size = 9), plot.title = element_text(size = 12, hjust = 0.5), 
         legend.title = element_text(size = 9), legend.text = element_text(size = 8), axis.text = element_text(size = 8)) +
   theme(panel.border = element_blank(), legend.position = 'bottom', panel.grid = element_blank()) +
-  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.9, vjust = -0.4))
+  geom_dl(aes(label = ..level..), stat = 'contour', breaks = seq(30, 210, by = 20), method = list('top.pieces', color = 'black', cex = 0.8, vjust = -0.4))
 ra2
 
 # Descriptive plot
@@ -800,20 +800,20 @@ ra4 = ggplot() +
   theme_linedraw() +
   theme(panel.border = element_blank(), panel.grid = element_blank(), legend.position = 'none') +
   geom_textsegment(aes(x = 0, y = 0, xend = 100, yend = 0,
-                       label = 'Increasing VPD', size = 4),
-                   linewidth = 1.8,
-                   arrow = arrow(length = unit(3, 'mm'))) +
+                       label = 'Increasing VPD'),
+                   linewidth = 1.2,
+                   arrow = arrow(length = unit(2.5, 'mm')), size = 3.8) +
   geom_textsegment(aes(x = 0, y = 0, xend = 0, yend = 100,
-                       label = 'Decreasing ~~ Psi', size = 4),
-                   parse = T, linewidth = 1.8,
-                   arrow = arrow(length = unit(3, 'mm'))) +
+                       label = 'phantom(l)~Decreasing ~~ italic(\U03A8)~phantom(l)'),
+                   parse = T, linewidth = 1.2,
+                   arrow = arrow(length = unit(2.5, 'mm')), size = 3.8) +
   geom_textsegment(aes(x = 0, y = 0, xend = 90, yend = 90,
-                       label = 'Increasing dryness', size = 4),
-                   linewidth = 1.8,
-                   arrow = arrow(length = unit(3, 'mm'))) +
-  xlab('VPD Index') + ylab(expression(paste(Psi,' Index'))) +
-  geom_label(aes(x = 30, y = 92, label = 'Dry soil'), size = 4, fill = NA) +
-  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 4, fill = NA) +
+                       label = 'Increasing dryness'),
+                   linewidth = 1.2,
+                   arrow = arrow(length = unit(2.5, 'mm')), size = 3.8) +
+  xlab('VPD Index') + ylab(expression(paste(italic('\U03A8'),' Index'))) +
+  geom_label(aes(x = 30, y = 92, label = 'Dry soil'), size = 3.5, fill = NA) +
+  geom_label(aes(x = 80, y = 30, label = 'Dry \natmosphere'), size = 3.5, fill = NA) +
   theme(axis.title = element_text(size = 9), axis.text = element_text(size = 8))
 
 # Format plots
@@ -825,7 +825,7 @@ ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3,
                labels = c('A', 'B', 'C'),
                label_size = 12)
 
-ggsave(ga, filename = 'Plots/Figure3.pdf', dpi = 300, height = 250, width = 100, units = 'mm')
+ggsave(ga, filename = 'Plots/Figure3.jpeg', dpi = 300, height = 220, width = 88, units = 'mm')
 
 ##################
 #### Figure 4 ####
@@ -1023,10 +1023,10 @@ ggplot() +
   geom_point(aes(x = tree_kreq$Time, y = tree_kreq$Kreq, color = 'Tree'),
              size = 4, show.legend = F) +
   geom_textline(aes(x = as.numeric(liana_kreq$Time), y = liana_kreq$Kreq, color = 'Liana',
-                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                    label = paste('Liana ~~ Delta~K["w,max"](req)  ==  47')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   geom_textline(aes(x = as.numeric(tree_kreq$Time), y = tree_kreq$Kreq, color = 'Tree',
-                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
+                    label = paste('Tree ~~ Delta~K["w,max"](req)  ==  2')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
@@ -1041,4 +1041,4 @@ ggplot() +
         legend.title = element_text(size = 9), legend.text = element_text(size = 8)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
-ggsave('Plots/Figure4.pdf', width = 90, height = 90, units = 'mm', dpi = 300)
+ggsave('Plots/Figure4.pdf', width = 88, height = 88, units = 'mm', dpi = 300)
