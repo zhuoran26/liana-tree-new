@@ -1,7 +1,7 @@
 ## This file creates Figures 1-5 of the main text of the associated manuscript
 
 ## This script requires the following inputs:
-    ## 1. full_met_analysis_data_12_July.csv: not given but can be
+    ## 1. full_met_analysis_data_8_Feb.csv: not given but can be
     ## recreated following the steps detailed in the Methods
     ## 2. param.input.RData: created in Input_parameter_est.R
     ## 3. bci_met_mxh.RData: created in BCI_met_process.R
