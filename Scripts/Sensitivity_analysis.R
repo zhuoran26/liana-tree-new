@@ -30,12 +30,12 @@ library(ggsci)
 library(cowplot)
 
 # Load functions and parameters
-load('param.input.RData')
+load('data/param.input.RData')
 # Load hydroclimate data
-load('bci_met_mxh.RData')
+load('data/ci_met_mxh.RData')
 BCI_SWP = SWP
 BCI_VPD = VPD
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_SWP = SWP
 H_VPD = VPD
 rm(SWP, VPD)

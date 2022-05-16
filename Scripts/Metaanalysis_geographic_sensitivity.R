@@ -15,7 +15,7 @@ library(tidyverse)
 library(gt)
 library(effectsize)
 
-data = read.csv('geographic_met_analysis_10_Jan_22.csv')
+data = read.csv('data/geographic_met_analysis_10_Jan_22.csv')
 
 data$Units_K = as.character(data$Units_K)
 

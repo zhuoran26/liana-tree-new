@@ -16,6 +16,7 @@ library(data.table)
 rm(list = ls())
 
 # Processed TRY data from full_TRY_analysis.R
+# Note that this file is not available but can be made available upon request
 data = read.csv('output_9oct.csv')
 
 # Remove column that doesn't mean anything
@@ -109,4 +110,4 @@ for(i in unique_id){
 }
 
 # Save final dataframe
-write.csv(data_final, 'filtered_TRY_analysis_16-03-21.csv')
+write.csv(data_final, 'data/filtered_TRY_analysis_16-03-21.csv')

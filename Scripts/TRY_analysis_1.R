@@ -16,6 +16,8 @@
 rm(list = ls())
 library(data.table)
 
+## Set working directory to data directory
+
 # Read in dataframe from text file
 sp.ll = fread('7754.txt')
 # Subset only necessary columns

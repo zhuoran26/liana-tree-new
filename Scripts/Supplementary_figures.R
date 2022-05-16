@@ -33,129 +33,17 @@ library(cowplot)
 library(DescTools)
 library(geomtextpath)
 
-#####################################
-#### Part 1: Inputs & parameters ####
-#####################################
-
-## gt() version of Supplementary Table 4
-
-rm(list = ls())
-
-## Parameters
-
-# Load table from CSV
-params = read.csv('Supplement_parameters.csv')
-
-# Make character objects
-params$Name = as.character(params$Name)
-params$Definition = as.character(params$Definition)
-params$Value = as.character(params$Value)
-params$Units = as.character(params$Units)
-params$Source = as.character(params$Source)
-params$Tree.or.liana.function = as.character(params$Tree.or.liana.function)
-
-# Make table
-params = as_tibble(params)
-
-# Split table into two 
-# (for formatting in Word)
-params_a = params[1:10,]
-params_b = params[11:20,]
-
-params_a %>%
-  gt() %>%
-  fmt_markdown(columns = c('Name', 'Definition', 'Value', 'Units', 'Source', 'Tree.or.liana.function')) %>%
-  tab_header(
-    title = md('Changed Model Parameters')) %>%
-  tab_options(
-    column_labels.font.size = 20,
-    table.width = pct(90),
-    heading.title.font.size = 22) %>%
-  cols_label('Tree.or.liana.function' = 'Tree or Liana Function') %>%
-  cols_width('Units' ~ px(150)) %>%
-  cols_width('Value' ~ px(200)) %>%
-  cols_width('Definition' ~ px(200)) %>%
-  cols_align(align = 'center') %>%
-  gtsave(filename = 'Plots/SupplementaryTable4a.png')
-
-params_b %>%
-  gt() %>%
-  fmt_markdown(columns = c('Name', 'Definition', 'Value', 'Units', 'Source', 'Tree.or.liana.function')) %>%
-  tab_options(
-    column_labels.font.size = 20,
-    table.width = pct(90),
-    heading.title.font.size = 22) %>%
-  cols_label('Tree.or.liana.function' = 'Tree or Liana Function') %>%
-  cols_width('Units' ~ px(150)) %>%
-  cols_width('Value' ~ px(200)) %>%
-  cols_width('Definition' ~ px(200)) %>%
-  cols_align(align = 'center') %>%
-  gtsave(filename = 'Plots/SupplementaryTable4b.png')
-
-## gt() version of Supplementary Table 3
-
-## Data sources
-source = read.csv('Sources_2.csv')
-
-source$Source = as.character(source$Source)
-source$K = as.character(source$K)
-source$P50 = as.character(source$P50)
-source$Slope = as.character(source$Slope)
-
-# Split into two
-# (for formatting in Word)
-source_a = source[1:8,]
-source_b = source[9:15,]
-
-source_a %>%
-  gt() %>%
-  fmt_markdown(columns = c('Source')) %>%
-  tab_header(
-    title = md('Extended meta-analysis data sources')) %>%
-  tab_options(
-    column_labels.font.size = 20,
-    table.width = pct(80),
-    heading.title.font.size = 22) %>%
-  cols_label('K' = html('K<sub><sub>s</sub></sub>')) %>%
-  cols_label('P50' = html('P<sub><sub>50</sub></sub>')) %>%
-  cols_label('n.liana' = html('n<sub><sub>liana</sub></sub>')) %>%
-  cols_label('n.tree' = html('n<sub><sub>tree</sub></sub>')) %>%
-  cols_align(align = 'center',
-             columns = c('K', 'P50', 'Slope', 'n.liana', 'n.tree')) %>%
-  cols_align(align = 'left',
-             columns = c('Source')) %>%
-  cols_width('Source' ~ px(500)) %>%
-  gtsave(filename = 'Plots/SupplementaryTable3a.png')
-
-source_b %>%
-  gt() %>%
-  fmt_markdown(columns = c('Source')) %>%
-  tab_options(
-    column_labels.font.size = 20,
-    table.width = pct(80),
-    heading.title.font.size = 22) %>%
-  cols_label('K' = html('K<sub><sub>s</sub></sub>')) %>%
-  cols_label('P50' = html('P<sub><sub>50</sub></sub>')) %>%
-  cols_label('n.liana' = html('n<sub><sub>liana</sub></sub>')) %>%
-  cols_label('n.tree' = html('n<sub><sub>tree</sub></sub>')) %>%
-  cols_align(align = 'center',
-             columns = c('K', 'P50', 'Slope', 'n.liana', 'n.tree')) %>%
-  cols_align(align = 'left',
-             columns = c('Source')) %>%
-  cols_width('Source' ~ px(500)) %>%
-  gtsave(filename = 'Plots/SupplementaryTable3b.png')
-
 ############################################
-#### Part 2: Hydraulic trait trade-offs ####
+#### Part 1: Hydraulic trait trade-offs ####
 ############################################
 
-## Supplementary Figure 4
+## Supplementary Figure 5
 
 # Clean up working environment for next part
 rm(list = ls())
 
 # Load in new data
-hydro_data = read.csv('full_met_analysis_data_8_Feb.csv')
+hydro_data = read.csv('data/full_met_analysis_data_8_Feb.csv')
 
 # Make units easier to work with
 hydro_data$Units_K = as.character(as.factor(hydro_data$Units_K))
@@ -353,19 +241,23 @@ ga = plot_grid(pl1 + theme(legend.position = 'none'),
                label_size = 30)
 ga
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure4.jpeg', height = 13, width = 13, unit = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure5.jpeg', height = 13, width = 13, unit = 'in')
 
 ###################################
 #### Part 3: DBH distributions ####
 ###################################
 
-## Supplementary Figure 5
+## This figure cannot be made with the provided data. This figure provides
+## a visualization of the DBH data that are used to run the model.
+## Summary statistics are provided for running the model.
+
+## Supplementary Figure 8
 
 rm(list = ls())
 
 # Load parameters & input
-load('param.input.RData')
-
+#load('param.input.RData')
+  
 # Plot tree DBH
 pl1 = ggplot() +
   geom_histogram(aes(x = hori.data.tree.dbh), bins = 10, color = 'black', fill = 'lightgray') +
@@ -394,21 +286,21 @@ ga = plot_grid(pl1, pl2,
                label_size = 30)
 ga
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure5.jpeg', width = 20, height = 10, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure8.jpeg', width = 20, height = 10, units = 'in')
 
 #################################
 #### Part 4: climate drivers ####
 #################################
 
-## Supplementary Figure 6
+## Supplementary Figure 9
 
 rm(list = ls())
 
 # Load climate data
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 BCI_VPD = VPD
 BCI_SWP = SWP
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 
@@ -505,21 +397,21 @@ ga2 = plot_grid(pl3 + theme(legend.position = 'none'),
                 label_size = 30)
 ga2
 
-ggsave(ga1, filename = 'Plots/SupplementaryFigure6a.jpeg', height = 8, width = 16, units = 'in')
-ggsave(ga2, filename = 'Plots/SupplementaryFigure6b.jpeg', height = 8, width = 16, units = 'in')
+ggsave(ga1, filename = 'Plots/SupplementaryFigure9a.jpeg', height = 8, width = 16, units = 'in')
+ggsave(ga2, filename = 'Plots/SupplementaryFigure9b.jpeg', height = 8, width = 16, units = 'in')
 
 #####################
 #### Part 5: TRY ####
 #####################
 
-## Supplementary Figures 7-9
+## Supplementary Figures 1, 6 & 7
 
 rm(list = ls())
 
 ## Load data
 
 # Read in TRY data and clean the data frame
-TRY = read.csv('filtered_TRY_analysis_16-03-21.csv')
+TRY = read.csv('data/filtered_TRY_analysis_16-03-21.csv')
 TRY = TRY[,-1]
 colnames(TRY) = c('Species.ID', 'Growth.form', 'LL.months', 
                   'SLA.mm2.mg', 'Narea.g.m2', 'Aarea.mmolC02.m2.s', 
@@ -642,17 +534,17 @@ plg = TRY %>%
   theme(axis.title.y = element_text(size = 15.5), axis.text = element_text(size = 15))
 
 ga_leaf = plot_grid(pla, plb, plc, pld, ple, plf, plg, 
-                       nrow = 2, ncol = 4, 
+                       nrow = 3, ncol = 3, 
                        labels = c('A', 'B', 'C', 'D', 'E', 'F', 'G'),
                        label_size = 22)
 
-ggsave(ga_leaf, filename = 'Plots/SupplementaryFigure8.jpeg', width = 12, height = 7, units = 'in')
+ggsave(ga_leaf, filename = 'Plots/SupplementaryFigure1.jpeg', width = 8, height = 12, units = 'in')
 
 #########################
 ## Plot 2: Stem traits ##
 #########################
 
-## Supplementary Table 7
+## Supplementary Figure 6
 
 # Number of species-level observations
 length(which(TRY$Growth.form == 'liana' & !is.na(TRY$SSD.g.cm3)))
@@ -727,17 +619,17 @@ ple = TRY %>%
   theme(axis.title.y = element_text(size = 12), axis.text = element_text(size = 15))
 
 ga_stem = plot_grid(pla, plb, plc, pld, ple, 
-                    nrow = 2, ncol = 3, 
+                    nrow = 3, ncol = 3, 
                     labels = c('A', 'B', 'C', 'D', 'E'),
                     label_size = 22)
 
-ggsave(ga_stem, filename = 'Plots/SupplementaryFigure7.jpeg', width = 10, height = 7, units = 'in')
+ggsave(ga_stem, filename = 'Plots/SupplementaryFigure6.jpeg', width = 8, height = 12, units = 'in')
 
 #########################
 ## Plot 3: Root traits ##
 #########################
 
-## Supplementary Table 9
+## Supplementary Figure 7
 
 # Number of species-level observations
 length(which(TRY$Growth.form == 'liana' & !is.na(TRY$SRL.m.g)))
@@ -802,13 +694,13 @@ ga_root = plot_grid(pla, plb, plc, pld,
                     labels = c('A', 'B', 'C', 'D'),
                     label_size = 22)
 
-ggsave(ga_root, filename = 'Plots/SupplementaryFigure9.jpeg', width = 10, height = 7, units = 'in')
+ggsave(ga_root, filename = 'Plots/SupplementaryFigure7.jpeg', width = 8, height = 10, units = 'in')
 
 ######################
 ## Table 1: U tests ##
 ######################
 
-## gt() version of Supplementary Table 5
+## gt() version of Supplementary Table 3
 
 # Storage & formatting
 sig_tests = as_tibble(matrix(, nrow = 16, ncol = 7))
@@ -1030,13 +922,13 @@ sig_tests %>%
              columns = c('Tree mean', 'Liana mean', 'n tree', 'n liana', 'Test Statistic', 'p-value')) %>%
   cols_align(align = 'left',
              columns = 'Trait') %>%
-  gtsave(filename = 'Plots/SupplementaryTable5.png')
+  gtsave(filename = 'Plots/SupplementaryTable3.png')
 
 ###########################
 ## Table 2: Effect sizes ##
 ###########################
 
-## gt() version of Supplementary Table 6
+## gt() version of Supplementary Table 4
 
 ## Note that Glass' Delta is computed using either the liana
 ## or tree growth form as the reference group
@@ -1309,7 +1201,7 @@ effect_size %>% gt() %>%
                          'Glass &Delta<sub>L</sub>', 'Lower CI<sub>L</sub>', 'Upper CI<sub>L</sub>')) %>%
   cols_align(align = 'left',
              columns = 'Trait') %>%
-  gtsave(filename = 'Plots/SupplementaryTable6.png')
+  gtsave(filename = 'Plots/SupplementaryTable4.png')
 
 ########################################
 #### Part 6: Extended Meta-analysis ####
@@ -1319,7 +1211,7 @@ effect_size %>% gt() %>%
 
 rm(list = ls())
 
-data = read.csv('full_met_analysis_data_8_Feb.csv')
+data = read.csv('data/full_met_analysis_data_8_Feb.csv')
 
 data$Units_K = as.character(data$Units_K)
 
@@ -1513,26 +1405,24 @@ effect_size %>% gt() %>%
 #### Part 7: Kreq ####
 ######################
 
-## Supplementary Figure 1
-
-## Before running this section, you must compile tree.NPP.mxh
-## & liana.NPP.mxh from NPP_models.R
+## Supplementary Figure 2
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Load parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Load met drivers
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 
 # Interpolate K on log scale and back-transform
 log_k = c(log(trees_K$K / 10), log(lianas_K$K))
 log_varyk = seq(min(log_k), max(log_k), length.out = 500)
 varyk = exp(log_varyk)
 
-# Interpolate DBH (and remove highest DBH)
-hori.data.liana.dbh = hori.data.liana.dbh[hori.data.liana.dbh < 29]
+# Choose DBHs
 dbhs = c(2, 6)
 
 # Storage
@@ -1611,24 +1501,23 @@ plot.w.inset = ggdraw() +
   draw_plot(inset, x = 0.35, y = 0.25, width = 0.4, height = 0.4) +
   theme(axis.text = element_text(size = 18))
 
-ggsave(plot = plot.w.inset, filename = 'Plots/SupplementaryFigure1.jpeg', width = 12, height = 7, units = 'in')
+ggsave(plot = plot.w.inset, filename = 'Plots/SupplementaryFigure2.jpeg', width = 12, height = 7, units = 'in')
 
 ####################################################
 #### Part 8: Invading liana climate sensitivity ####
 ####################################################
 
-## Supplementary Figures 10
-
-## Before running this section, you must compile tree.NPP.mxh
-## & liana.NPP.mxh from NPP_models.R
+## Supplementary Figures 18
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 # Indices
 nsite = 100
@@ -1687,10 +1576,10 @@ for(vsite in 1:nsite){
 }
 
 # First time running, save output (long computation time)
-#save(tree.req, file = 'tree.req.100interp.monthly_invasion_200.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly_invasion_200.RData')
 
 # After first time, load output for further formatting
-load(file = 'tree.req.100interp.monthly_invasion_200.RData')
+load(file = 'outputs/tree.req.100interp.monthly_invasion_200.RData')
 # Format
 tree.req = tree.req * 0.001
 tree_req_melt = melt(tree.req)
@@ -1762,9 +1651,9 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as described above
-#save(liana.req, file = 'liana.req.100interp.monthly_invasion_200.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly_invasion_200.RData')
 
-load(file = 'liana.req.100interp.monthly_invasion_200.RData')
+load(file = 'outputs/liana.req.100interp.monthly_invasion_200.RData')
 # Format
 liana.req = liana.req * 0.001
 liana_req_melt = melt(liana.req)
@@ -1793,27 +1682,27 @@ ga_fin = plot_grid(ra1, ra2,
                    labels = c('A', 'B'),
                    label_size = 24)
 
-ggsave(ga_fin, filename = 'Plots/SupplementaryFigure10.jpeg', width = 12, height = 7, units = 'in')
+ggsave(ga_fin, filename = 'Plots/SupplementaryFigure18.jpeg', width = 12, height = 7, units = 'in')
 
 ##################################
 #### Part 9: Future scenarios ####
 ##################################
 
-## Supplementary Figure 2
-
-## Before running this scenario, you must compile tree.NPP.mxh.ca 
-## & liana.NPP.mxh.ca from NPP_models_wCO2.R
+## Supplementary Figure 3
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 BCI_VPD = VPD
 BCI_SWP = SWP
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 rm(VPD, SWP)
@@ -1947,6 +1836,9 @@ for(vsite in 1:vpdsite){
 
 tree.req_h = tree.req_h * 0.001
 
+# Save for Main Figure 5
+save(tree.req_bci, tree.req_h, file = 'Outputs/tree_req_future_established_200_wCO2.RData')
+
 pl1 = ggplot() +
   geom_point(aes(x = mult, y = tree.req_bci, color = 'Wettest'), size = 1.3) +
   geom_point(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.3) +
@@ -2067,6 +1959,9 @@ for(vsite in 1:vpdsite){
 
 liana.req_h = liana.req_h * 0.001
 
+# Save output for Main Figure 5
+save(liana.req_bci, liana.req_h, file = 'outputs/liana_req_future_established_200_wCO2.RData')
+
 pl2 = ggplot() +
   geom_point(aes(x = mult, y = liana.req_bci, color = 'Wettest'), size = 1.3) +
   geom_point(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.3) +
@@ -2104,7 +1999,7 @@ ga = plot_grid(pl1 + theme(legend.position = 'none'),
                labels = c('A', 'B', ''),
                label_size = 30, hjust = -1)
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure2a.jpeg', width = 16, height = 8, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure3a.jpeg', width = 16, height = 8, units = 'in')
 
 ##################################
 ## Tree runs, invasion scenario ##
@@ -2357,27 +2252,27 @@ ga = plot_grid(pl1 + theme(legend.position = 'none'),
                labels = c('C', 'D', ''),
                label_size = 30, hjust = -1.5)
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure2b.jpeg', width = 16, height = 8, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure3b.jpeg', width = 16, height = 8, units = 'in')
 
 ##############################
 #### Part 10: future Kreq ####
 ##############################
 
-## Supplementary Figure 3
-
-## Before running this section, you must compile
-## tree.NPP.mxh.ca & liana.NPP.mxh.ca from NPP_models_wCO2.R
+## Supplementary Figure 4
 
 ## These simulations correspond to the invading liana scenario
 ## in the present and future (2100)
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 rm(VPD, SWP)
@@ -2564,7 +2459,6 @@ liana_kreq$Kreq = as.numeric(liana_kreq$Kreq)
 tree_kreq$Kreq = as.numeric(tree_kreq$Kreq)
 
 # Plot
-# Plot
 ggplot() +
   geom_point(aes(x = liana_kreq$Time, y = liana_kreq$Kreq, color = 'Liana'),
              size = 4, show.legend = F) +
@@ -2589,13 +2483,13 @@ ggplot() +
         legend.title = element_text(size = 12), legend.text = element_text(size = 10)) +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
-ggsave('Plots/SupplementaryFigure3.jpeg', width = 88, height = 88, units = 'mm')
+ggsave('Plots/SupplementaryFigure4.jpeg', width = 88, height = 88, units = 'mm')
 
 ##########################################
 #### Part 11: Canopy area sensitivity ####
 ##########################################
 
-## Supplementary Figures 11-15
+## Supplementary Figures 12-16
 
 ##########################
 ## Main Figure 2 150 m2 ##
@@ -2603,16 +2497,16 @@ ggsave('Plots/SupplementaryFigure3.jpeg', width = 88, height = 88, units = 'mm')
 
 ## Supplementary Figure 11
 
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Load parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Load met drivers
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 
 # Input K values
 nK = 75000
@@ -2620,8 +2514,7 @@ ks = c(trees_K$K / 10, lianas_K$K)
 varyk = seq(min(ks), max(ks), length.out = nK)
 
 # Interpolate DBH (and remove highest DBH)
-hori.data.liana.dbh = hori.data.liana.dbh[hori.data.liana.dbh < 29]
-dbhs = seq(min(hori.data.liana.dbh), max(hori.data.liana.dbh), length.out = 50)
+dbhs = seq(liana.dbh.low, liana.dbh.high, length.out = 50)
 
 ## Tree: 90% canopy, mean DBH, BCI
 
@@ -2786,7 +2679,7 @@ for(i in 1:length(dbhs)){
 }
 
 # Load new climate drivers (Horizontes)
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 
 ## Tree: 90% canopy, mean DBH, Horizontes
 
@@ -3011,7 +2904,7 @@ pl = plot_grid(pl, nrow = 1,
                labels = c('A'),
                label_size = 30)
 
-ggsave(pl, filename = 'Plots/SupplementaryFigure11a.jpeg', width = 14, height = 8, units = 'in')
+ggsave(pl, filename = 'Plots/SupplementaryFigure12a.jpeg', width = 14, height = 8, units = 'in')
 
 ##########################
 ## Main Figure 2 400 m2 ##
@@ -3019,16 +2912,16 @@ ggsave(pl, filename = 'Plots/SupplementaryFigure11a.jpeg', width = 14, height = 
 
 ## Supplementary Figure 11
 
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Load parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Load met drivers
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 
 # Input K values
 nK = 75000
@@ -3036,8 +2929,7 @@ ks = c(trees_K$K / 10, lianas_K$K)
 varyk = seq(min(ks), max(ks), length.out = nK)
 
 # Interpolate DBH (and remove highest DBH)
-hori.data.liana.dbh = hori.data.liana.dbh[hori.data.liana.dbh < 29]
-dbhs = seq(min(hori.data.liana.dbh), max(hori.data.liana.dbh), length.out = 50)
+dbhs = seq(liana.dbh.low, liana.dbh.high, length.out = 50)
 
 ## Tree: 90% canopy, mean DBH, BCI
 
@@ -3202,7 +3094,7 @@ for(i in 1:length(dbhs)){
 }
 
 # Load new climate drivers (Horizontes)
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 
 ## Tree: 90% canopy, mean DBH, Horizontes
 
@@ -3429,24 +3321,23 @@ pl = plot_grid(pl,
                labels = c('B'),
                label_size = 30)
 
-ggsave(pl, filename = 'Plots/SupplementaryFigure11b.jpeg', width = 14, height = 8, units = 'in')
+ggsave(pl, filename = 'Plots/SupplementaryFigure12b.jpeg', width = 14, height = 8, units = 'in')
 
 #########################
 ## Interpolation plots ##
 #########################
 
-## Supplementary Figure 12
-
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
+## Supplementary Figure 13
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 # Indexing
 nsite = 100
@@ -3509,13 +3400,13 @@ for(vsite in 1:nsite){
 }
 
 # Save output due to high computation time
-#save(tree.req, file = 'tree.req.100interp.monthly_150.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly_150.RData')
 
 # Load once this has been run once
-load(file = 'tree.req.100interp.monthly_150.RData')
+load(file = 'outputs/tree.req.100interp.monthly_150.RData')
 # Process
 tree.req = tree.req * 0.001
-tree_req_melt = melt(tree.req)
+tree_req_melt = reshape2::melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -3582,12 +3473,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(liana.req, file = 'liana.req.100interp.monthly_150.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly_150.RData')
 
-load(file = 'liana.req.100interp.monthly_150.RData')
+load(file = 'outputs/liana.req.100interp.monthly_150.RData')
 # Processing
 liana.req = liana.req * 0.001
-liana_req_melt = melt(liana.req)
+liana_req_melt = reshape2::melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -3618,22 +3509,21 @@ ga = plot_grid(ra1_fin, ra2_fin,
                labels = c('A', 'B'),
                label_size = 24)
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure12a.jpeg', height = 7, width = 12, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure13a.jpeg', height = 7, width = 12, units = 'in')
 
 #########################
 ## Established: 400 m2 ##
 #########################
 
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 # Indexing
 nsite = 100
@@ -3692,12 +3582,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(tree.req, file = 'tree.req.100interp.monthly.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly.RData')
 
-load(file = 'tree.req.100interp.monthly.RData')
+load(file = 'outputs/tree.req.100interp.monthly.RData')
 # Process
 tree.req = tree.req * 0.001
-tree_req_melt = melt(tree.req)
+tree_req_melt = reshape2::melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 ra1 = ggplot(tree_req_melt, aes(x = VPD_site, y = SWP_site, z = Ksurv, fill = Ksurv)) +
@@ -3766,12 +3656,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as before
-#save(liana.req, file = 'liana.req.100interp.monthly.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly.RData')
 
-load(file = 'liana.req.100interp.monthly.RData')
+load(file = 'outputs/liana.req.100interp.monthly.RData')
 # Processing
 liana.req = liana.req * 0.001
-liana_req_melt = melt(liana.req)
+liana_req_melt = reshape2::melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -3802,24 +3692,23 @@ ga = plot_grid(ra1_fin, ra2_fin,
                labels = c('C', 'D'),
                label_size = 24)
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure12b.jpeg', height = 8, width = 14, units = 'in')
+ggsave(ga, filename = 'Plots/SupplementaryFigure13b.jpeg', height = 8, width = 14, units = 'in')
 
 ###############################
 ## Invasion scenario: 150 m2 ##
 ###############################
 
-## Supplementary Figure 13
-
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
+## Supplementary Figure 14
 
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 # Indexing
 nsite = 100
@@ -3878,12 +3767,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(tree.req, file = 'tree.req.100interp.monthly_invasion_150.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly_invasion_150.RData')
 
-load(file = 'tree.req.100interp.monthly_invasion_150.RData')
+load(file = 'outputs/tree.req.100interp.monthly_invasion_150.RData')
 # Processing
 tree.req = tree.req * 0.001
-tree_req_melt = melt(tree.req)
+tree_req_melt = reshape2::melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -3950,12 +3839,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(liana.req, file = 'liana.req.100interp.monthly_invasion_150.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly_invasion_150.RData')
 
-load(file = 'liana.req.100interp.monthly_invasion_150.RData')
+load(file = 'outputs/liana.req.100interp.monthly_invasion_150.RData')
 # Processing
 liana.req = liana.req * 0.001
-liana_req_melt = melt(liana.req)
+liana_req_melt = reshape2::melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -3982,22 +3871,21 @@ ga_fin = plot_grid(ra1, ra2,
                    labels = c('A', 'B'),
                    label_size = 24)
 
-ggsave(ga_fin, filename = 'Plots/SupplementaryFigure13a.jpeg', height = 8, width = 14, units = 'in')
+ggsave(ga_fin, filename = 'Plots/SupplementaryFigure14a.jpeg', height = 8, width = 14, units = 'in')
 
 ###############################
 ## Invasion scenario: 400 m2 ##
 ###############################
 
-## Before running this section, you must compile
-## tree.NPP.mxh & liana.NPP.mxh from NPP_models.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 # Indexing
 nsite = 100
@@ -4056,12 +3944,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(tree.req, file = 'tree.req.100interp.monthly_invasion.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly_invasion.RData')
 
-load(file = 'tree.req.100interp.monthly_invasion.RData')
+load(file = 'outputs/tree.req.100interp.monthly_invasion.RData')
 # Processing
 tree.req = tree.req * 0.001
-tree_req_melt = melt(tree.req)
+tree_req_melt = reshape2::melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -4128,12 +4016,12 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as above
-#save(liana.req, file = 'liana.req.100interp.monthly_invasion.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly_invasion.RData')
 
-load(file = 'liana.req.100interp.monthly_invasion.RData')
+load(file = 'outputs/liana.req.100interp.monthly_invasion.RData')
 # Processing
 liana.req = liana.req * 0.001
-liana_req_melt = melt(liana.req)
+liana_req_melt = reshape2::melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -4160,24 +4048,23 @@ ga_fin = plot_grid(ra1, ra2,
                    labels = c('C', 'D'),
                    label_size = 24)
 
-ggsave(ga_fin, filename = 'Plots/SupplementaryFigure13b.jpeg', height = 8, width = 14, units = 'in')
+ggsave(ga_fin, filename = 'Plots/SupplementaryFigure14b.jpeg', height = 8, width = 14, units = 'in')
 
 #####################################
 ## Future Kreq: 150 m2 established ##
 #####################################
 
-## Supplementary Figure 14
-
-## Before running this section, you must compile
-## tree.NPP.mxh.ca & liana.NPP.mxh.ca from NPP_models_wCO2.R
+## Supplementary Figure 15
 
 rm(list = ls())
 
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 rm(VPD, SWP)
@@ -4596,24 +4483,23 @@ p2
 # Plot together
 ga = plot_grid(p1, p2,
                labels = c('A', 'B'),
-               label_size = 24)
+               label_size = 12)
 
-ggsave(plot = ga, 'Plots/SupplementaryFigure14.jpeg', width = 8, height = 4)
+ggsave(plot = ga, 'Plots/SupplementaryFigure15.jpeg', width = 176, height = 88, unit = 'mm')
 
 #########################################
 ## Kreq-Kw comparison: 150 m2 invasion ##
 #########################################
 
-## Before running this section, you must compile
-## tree.NPP.mxh.ca & liana.NPP.mxh.ca from NPP_models_wCO2.R
-
 rm(list = ls())
 
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 rm(VPD, SWP)
@@ -4808,7 +4694,7 @@ p1 = ggplot() +
   geom_point(aes(x = tree_kreq_1$Time, y = tree_kreq_1$Kreq, color = 'Tree'),
              size = 4, show.legend = F) +
   geom_textline(aes(x = as.numeric(liana_kreq_1$Time), y = liana_kreq_1$Kreq, color = 'Liana',
-                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  16')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   geom_textline(aes(x = as.numeric(tree_kreq_1$Time), y = tree_kreq_1$Kreq, color = 'Tree',
                     label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
@@ -5008,10 +4894,10 @@ p2 = ggplot() +
   geom_point(aes(x = tree_kreq_2$Time, y = tree_kreq_2$Kreq, color = 'Tree'),
              size = 4, show.legend = F) +
   geom_textline(aes(x = as.numeric(liana_kreq_2$Time), y = liana_kreq_2$Kreq, color = 'Liana',
-                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  47')), 
+                    label = paste('Liana ~~ Delta~', 'K[w,max](req)  ==  41')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   geom_textline(aes(x = as.numeric(tree_kreq_2$Time), y = tree_kreq_2$Kreq, color = 'Tree',
-                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  2')), 
+                    label = paste('Tree ~~ Delta~', 'K[w,max](req)  ==  5')), 
                 parse = T, show.legend = F, linewidth = 1.5, size = 3) +
   scale_x_discrete(limits = c('2000', '2100')) +
   xlab('') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
@@ -5030,690 +4916,338 @@ p2
 # Plot together
 ga = plot_grid(p1, p2,
                labels = c('A', 'B'),
-               label_size = 24)
+               label_size = 12)
 
-ggsave(plot = ga, 'Plots/SupplementaryFigure15.jpeg', width = 8, height = 4)
+ggsave(plot = ga, 'Plots/SupplementaryFigure16.jpeg', width = 176, height = 88, unit = 'mm')
 
-########################
-#### P50 Adaptation ####
-########################
+############################################
+#### Part 11: Site & Geography Analysis ####
+############################################
 
-## Supplementary Figure 16
+## Dry season length is taken for the papers associated with Kmax observations
+## If the site does not have a dry season, dry season length = 0
+
+## Kmax values are those from the meta analysis
+
+## The spreadsheet was compiled by matching site to species-level observation
+## for each study and compiling with K and P50 data from those studies
+## If the same species was measured in multiple papers, study-level data
+## were used
+## If more than one site was used in the same paper, species-level observations
+## were matched to the site to the author's best ability
 
 rm(list = ls())
 
-#### Use empirical data to make P50-Slope scenarios
+# Read in compiled data frame
+data = read.csv('data/fhydraulic.trait_clim_geo.csv')
 
-# Load in new data
-hydro_data = read.csv('full_met_analysis_data_8_Feb.csv')
+data$Units_K = as.character(data$Units_K)
 
-# Make units easier to work with
-hydro_data$Units_K = as.character(as.factor(hydro_data$Units_K))
-
-# Convert units for K measurements
-for(i in 1:nrow(hydro_data)){
-  if(hydro_data$Units_K[i] == 'kg/m/s/Mpa'){
-    hydro_data$K[i] = hydro_data$K[i] * 1000 / 18 * 1000
-    hydro_data$Units_K[i] = 'mmol/m/s/Mpa'
+# Convert to consistent units
+for(i in 1:nrow(data)){
+  if(data$Units_K[i] == 'kg/m/s/Mpa'){
+    # Convert from kg to mmol H2O
+    data$K[i] = data$K[i] * 1000 / 18 * 1000
+    data$Units_K[i] = 'mmol/m/s/Mpa'
   }else{
-    if(hydro_data$Units_K[i] == 'mol/m/s/Mpa'){
-      hydro_data$K[i] = hydro_data$K[i] * 1000
-      hydro_data$Units_K[i] = 'mmol/m/s/Mpa'
+    if(data$Units_K[i] == 'mol/m/s/Mpa'){
+      # Convert from mol to mmol H2O
+      data$K[i] = data$K[i] * 1000
+      data$Units_K[i] = 'mmol/m/s/Mpa'
     }else{
-      if(hydro_data$Units_K[i] == ''){
-        next
-      }else{
-        print('Error with units')
-      }
+      print('Unknown units')
+      print(data$Units_K[i])
     }
   }
 }
 
-# Remove P50 > -0.75 consistent with Trugman et al. 2020
-hydro_data = hydro_data %>%
-  mutate(P50, replace(P50, P50 > -0.75, NA)) %>%
-  dplyr::select(-P50)
+data$Units_K = as.factor(data$Units_K)
+data$K_molmsMPa = data$K * 0.001
 
-# Rename column with NAs
-colnames(hydro_data)[ncol(hydro_data)] = 'P50'
+## K - Latitude
 
-# Make sure only one unit remains for each
-unique(hydro_data$Units_K)
-unique(hydro_data$Units_P50)
-unique(hydro_data$Units_Slope)
-
-# Log transform variables
-# Notice that P50 is now positive, but it does not change the fundamental relationship
-hydro_data$log_P50 = log(-hydro_data$P50)
-hydro_data$log_K = log(hydro_data$K)
-hydro_data$log_slope = log(hydro_data$Slope)
-
-# Summarize for both growth forms
-all_lm = summary(lm(hydro_data$log_slope ~ hydro_data$log_P50))
-
-#### Use coefficients from linear regression to develop new P50-Slope
-#### combinations for lianas
-
-# liana P50 = -2.25
-slope_2.25 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(2.25)
-slope_2.25 = 10^slope_2.25
-
-# Ensure the point falls within the range of observations
-ggplot() +
-  geom_point(aes(x = hydro_data$P50, y = hydro_data$Slope), alpha = 0.5) +
-  geom_point(aes(x = -2.25, y = slope_2.25), color = 'maroon')
-
-# liana P50 = -2.5
-slope_2.5 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(2.5)
-slope_2.5 = 10^slope_2.5
-
-# Ensure the point falls within the range of observations
-ggplot() +
-  geom_point(aes(x = hydro_data$P50, y = hydro_data$Slope), alpha = 0.5) +
-  geom_point(aes(x = -2.5, y = slope_2.5), color = 'maroon')
-
-# liana P50 = -3
-slope_3 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(3)
-slope_3 = 10^slope_3
-
-# Ensure the point falls within the range of observations
-ggplot() +
-  geom_point(aes(x = hydro_data$P50, y = hydro_data$Slope), alpha = 0.5) +
-  geom_point(aes(x = -3, y = slope_3), color = 'maroon')
-
-# Input parameters
-load('param.input.RData')
-
-# Met drivers
-load('Driver_calc/BCI/bci_met_mxh.RData')
-BCI_VPD = VPD
-BCI_SWP = SWP
-load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
-H_VPD = VPD
-H_SWP = SWP
-rm(VPD, SWP)
-
-# Indexing months and days
-nmonth = 12
-nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-
-vpdsite = 11
-nK = 75000
-
-# Sequence of multipliers
-mult = seq(1, 2, by = 0.1)
-
-# BCI future scenarios
-BCI_VPD_future = array(, dim = c(12, 24, 11))
-BCI_VPD_future[,,1] = BCI_VPD
-
-for(i in 2:11){
-  BCI_VPD_future[,,i] = BCI_VPD * mult[i]
-}
-
-# Horizontes future scenarios
-H_VPD_future = array(, dim = c(12, 24, 11))
-H_VPD_future[,,1] = H_VPD
-
-for(i in 2:11){
-  H_VPD_future[,,i] = H_VPD * mult[i]
-}
-
-#### Tree - established scenario, no P50 adaptation
-
-# Load saved simulation results from Supplementary figures.R
-load('tree_req_future_established_200_wCO2.RData')
-
-#### Tree - established scenario, P50 adaptation = -2.25
-
-ks = c(trees_K$K / 10, lianas_K$K)
-Ks = seq(min(ks), max(ks), length.out = nK)
-
-## BCI
-
-sens = c()
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.25
-    b2 = -2.25
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_bci_adap = K
-    break
-  }
-}
-
-tree.req_bci_adap = tree.req_bci_adap * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.25
-    b2 = -2.25
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_h_adap = K
-    break
-  }
-}
-
-tree.req_h_adap = tree.req_h_adap * 0.001
-
-#### Liana - established scenario, no P50 adaptation
-
-load('liana_req_future_established_200_wCO2.RData')
-
-#### Liana - established scenario, P50 adaptation = -2.25
-
-## BCI
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.25
-    b2 = -2.25
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_bci_adap = K
-    break
-  }
-}
-
-liana.req_bci_adap = liana.req_bci_adap * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.25
-    b2 = -2.25
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_h_adap = K
-    break
-  }
-}
-
-liana.req_h_adap = liana.req_h_adap * 0.001
-
-#### Tree - established scenario, P50 adaptation = -2.5
-
-## BCI
-
-sens = c()
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.5
-    b2 = -2.5
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_bci_adap_2.5 = K
-    break
-  }
-}
-
-tree.req_bci_adap_2.5 = tree.req_bci_adap_2.5 * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.5
-    b2 = -2.5
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_h_adap_2.5 = K
-    break
-  }
-}
-
-tree.req_h_adap_2.5 = tree.req_h_adap_2.5 * 0.001
-
-#### Liana - established scenario, P50 adaptation = -2.5
-
-## BCI
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.5
-    b2 = -2.5
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_bci_adap_2.5 = K
-    break
-  }
-}
-
-liana.req_bci_adap_2.5 = liana.req_bci_adap_2.5 * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_2.5
-    b2 = -2.5
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_h_adap_2.5 = K
-    break
-  }
-}
-
-liana.req_h_adap_2.5 = liana.req_h_adap_2.5 * 0.001
-
-#### Tree - established scenario, P50 adaptation = -3
-
-## BCI
-
-sens = c()
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_3
-    b2 = -3
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_bci_adap_3 = K
-    break
-  }
-}
-
-tree.req_bci_adap_3 = tree.req_bci_adap_3 * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:nmonth){
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    tree.dbh = mean.hori.data.tree.dbh
-    
-    tot.al = 2 * 100
-    frac.tree.al = 0.6
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
-    }else{
-      tree.height = tree.out[5]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_3
-    b2 = -3
-    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = tree.out[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    tree.req_h_adap_3 = K
-    break
-  }
-}
-
-tree.req_h_adap_3 = tree.req_h_adap_3 * 0.001
-
-# Plot with & without P50 adaptation for tree alone
-pl1 = ggplot() +
-  geom_point(aes(x = mult, y = tree.req_bci, color = 'Wettest'), size = 1.3) +
-  geom_point(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.3) +
-  geom_line(aes(x = mult, y = tree.req_bci, color = 'Wettest'), size = 1.2) +
-  geom_line(aes(x = mult, y = tree.req_h, color = 'Driest'), size = 1.2) +
-  geom_point(aes(x = mult[11], y = tree.req_bci_adap, color = 'Wettest'), shape = 17, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = tree.req_h_adap, color = 'Driest'), shape = 17, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = tree.req_bci_adap_2.5, color = 'Wettest'), shape = 18, size = 5, show.legend = F) + 
-  geom_point(aes(x = mult[11], y = tree.req_h_adap_2.5, color = 'Driest'), shape = 18, size = 5, show.legend = F) + 
-  geom_point(aes(x = mult[11], y = tree.req_bci_adap_3, color = 'Wettest'), shape = 15, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = tree.req_h_adap_3, color = 'Driest'), shape = 15, size = 4, show.legend = F) +
-  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+p1 = ggplot(data, aes(x = Latitude, y = K_molmsMPa)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Latitude') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
+  xlab('Latitude') + ylab(bquote(K['s,max'] (mol~m^-1~s^-1~MPa^-1))) +
+  annotate('text', x = -25, y = 6000, label = 'y = 413 + 6.52x', size = 5) +
+  annotate('text', x = -25, y = 5600, label = expression(paste(R[adj]^2, ' = 0.01')), size = 5) +
   theme_linedraw() +
-  scale_color_npg(name = 'Site') +
-  ggtitle('Tree') +
-  theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 26), 
-        axis.text = element_text(size = 26), 
-        legend.title = element_text(size = 28), 
-        legend.text = element_text(size = 26),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-pl1
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p1
 
-#### Liana - established scenario, P50 adaptation = -3
+summary(lm(data$K_molmsMPa ~ data$Latitude))
 
-## BCI
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = BCI_SWP[mo]
-    
-    D = BCI_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_3
-    b2 = -3
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_bci_adap_3 = K
-    break
-  }
-}
-
-liana.req_bci_adap_3 = liana.req_bci_adap_3 * 0.001
-
-## Horizontes
-
-for(k in 1:nK){
-  for(mo in 1:12){
-    # Specify Ca = 550
-    Ca = 550
-    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    month = mo
-    
-    dbh = mean.data.liana.dbh
-    
-    tot.al = 2 * 100
-    frac.liana.al = 0.4
-    
-    psis = H_SWP[mo]
-    
-    D = H_VPD_future[mo,,11]
-    
-    if(mo == 1){
-      liana.length = tree.out[2]
-    }else{
-      liana.length = lianaout[4]
-    }
-    K = Ks[k]
-    # Specify b1 & b2
-    b1 = slope_3
-    b2 = -3
-    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
-    sens[mo] = lianaout[1]
-  }
-  sum = sum(sens)
-  if(sum > 0){
-    liana.req_h_adap_3 = K
-    break
-  }
-}
-
-liana.req_h_adap_3 = liana.req_h_adap_3 * 0.001
-
-pl2 = ggplot() +
-  geom_point(aes(x = mult, y = liana.req_bci, color = 'Wettest'), size = 1.3) +
-  geom_point(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.3) +
-  geom_line(aes(x = mult, y = liana.req_bci, color = 'Wettest'), size = 1.2) +
-  geom_line(aes(x = mult, y = liana.req_h, color = 'Driest'), size = 1.2) +
-  geom_point(aes(x = mult[11], y = liana.req_bci_adap, color = 'Wettest'), shape = 17, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = liana.req_h_adap, color = 'Driest'), shape = 17, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = liana.req_bci_adap_2.5, color = 'Wettest'), shape = 18, size = 5, show.legend = F) +
-  geom_point(aes(x = mult[11], y = liana.req_h_adap_2.5, color = 'Driest'), shape = 18, size = 5, show.legend = F) +
-  geom_point(aes(x = mult[11], y = liana.req_bci_adap_3, color = 'Wettest'), shape = 15, size = 4, show.legend = F) +
-  geom_point(aes(x = mult[11], y = liana.req_h_adap_3, color = 'Driest'), shape = 15, size = 4, show.legend = F) +
-  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+ggplot(data, aes(x = Latitude, y = K_molmsMPa, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Latitude') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
   theme_linedraw() +
-  scale_color_npg(name = 'Site') +
-  ggtitle('Liana') +
-  theme(plot.title = element_text(size = 30, hjust = 0.5), 
-        axis.title = element_text(size = 26), 
-        axis.text = element_text(size = 26), 
-        legend.title = element_text(size = 28), 
-        legend.text = element_text(size = 26),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
-pl2
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
 
-get_legend<-function(myggplot){
-  tmp <- ggplot_gtable(ggplot_build(myggplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)
-}
+summary(lm(data$K[which(data$Growth.form == 'tree')] ~ data$Latitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$K[which(data$Growth.form == 'liana')] ~ data$Latitude[which(data$Growth.form == 'liana')]))
 
-legend = get_legend(pl2)
+## K - Longitude
 
-ga = plot_grid(pl1 + theme(legend.position = 'none'), 
-               pl2 + theme(legend.position = 'none'), 
-               legend, nrow = 1, 
-               rel_widths = c(2.3, 2.3, 0.7),
-               labels = c('A', 'B', ''),
-               label_size = 24)
+p2 = ggplot(data, aes(x = Longitude, y = K_molmsMPa)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Longitude') + ylab('') +
+  annotate('text', x = -25, y = 6000, label = 'y = 496 - 1.54x', size = 5) +
+  annotate('text', x = -25, y = 5600, label = expression(paste(R[adj]^2, ' = 0.03')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p2
 
-ggsave(ga, filename = 'Plots/SupplementaryFigure16.jpeg', width = 16, height = 8, units = 'in')
+summary(lm(data$K_molmsMPa ~ data$Longitude))
+
+ggplot(data, aes(x = Longitude, y = K_molmsMPa, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Longitude') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$K[which(data$Growth.form == 'tree')] ~ data$Longitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$K[which(data$Growth.form == 'liana')] ~ data$Longitude[which(data$Growth.form == 'liana')]))
+
+## K - Altitude
+
+p3 = ggplot(data, aes(x = Altitude, y = K_molmsMPa)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Altitude (m)') + ylab('') +
+  annotate('text', x = 480, y = 6100, label = 'y = 641 - 0.39x', size = 5) +
+  annotate('text', x = 480, y = 5500, label = expression(paste(R[adj]^2, ' = 0.03')), size = 5) +
+  scale_x_continuous(breaks = seq(0, 2000, by = 1000)) +
+  theme_linedraw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p3
+
+summary(lm(data$K_molmsMPa ~ data$Altitude))
+
+ggplot(data, aes(x = Altitude, y = K_molmsMPa, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Altitude (m)') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$K[which(data$Growth.form == 'tree')] ~ data$Altitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$K[which(data$Growth.form == 'liana')] ~ data$Altitude[which(data$Growth.form == 'liana')]))
+
+## K - dry season length
+
+p4 = ggplot(data, aes(x = Dry_len, y = K_molmsMPa)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Dry season\nlength (months)') + ylab('') +
+  annotate('text', x = 2, y = 6000, label = 'y = 312 + 39.2x', size = 5) +
+  annotate('text', x = 2, y = 5400, label = expression(paste(R[adj]^2, ' < 0.01')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p4
+
+summary(lm(data$K_molmsMPa ~ data$Dry_len))
+summary(aov(data$K ~ data$Dry_len))
+
+ggplot(data, aes(x = Dry_len, y = K, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Dry season\nlength (months)') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$K[which(data$Growth.form == 'tree')] ~ data$Dry_len[which(data$Growth.form == 'tree')]))
+summary(lm(data$K[which(data$Growth.form == 'liana')] ~ data$Dry_len[which(data$Growth.form == 'liana')]))
+
+summary(aov(data$K[which(data$Growth.form == 'tree')] ~ data$Dry_len[which(data$Growth.form == 'tree')]))
+summary(aov(data$K[which(data$Growth.form == 'liana')] ~ data$Dry_len[which(data$Growth.form == 'liana')]))
+
+## K - field season
+
+p5 = data %>%
+  filter(Meas_szn != '') %>%
+  ggplot(aes(x = Meas_szn, y = K_molmsMPa, group = Meas_szn)) + 
+  geom_boxplot() +
+  scale_x_discrete(labels = c('Dry', 'Wet', 'Both')) +
+  xlab('Season of \nmeasurement') + ylab('') +
+  annotate('text', x = 'Dry', hjust = -0.5, y = 3500, label = 'ANOVA p < 0.01', size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p5
+
+summary(aov(data$K ~ data$Meas_szn))
+t.test(data$K[which(data$Meas_szn == 'Dry')], data$K[which(data$Meas_szn == 'Wet')])
+
+data %>%
+  filter(Meas_szn != '') %>%
+  ggplot(aes(x = Meas_szn, y = K_molmsMPa, group = Meas_szn)) + 
+  geom_boxplot() + facet_wrap(~Growth.form, labeller = labeller(Growth.form = c('liana' = 'Liana', 'tree' = 'Tree'))) +
+  scale_x_discrete(labels = c('Dry', 'Wet', 'Both')) +
+  xlab('Season of measurement') + ylab(expression(paste(K[s], ' (mol/m/s/MPa)'))) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26, angle = 45), strip.text = element_text(size = 30))
+
+
+summary(aov(data$K[which(data$Growth.form == 'tree')] ~ data$Meas_szn[which(data$Growth.form == 'tree')]))
+summary(aov(data$K[which(data$Growth.form == 'liana')] ~ data$Meas_szn[which(data$Growth.form == 'liana')]))
+
+## P50 - Latitude
+
+p6 = ggplot(data, aes(x = Latitude, y = P50)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Latitude') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  coord_cartesian(xlim = c(0, 30)) +
+  annotate('text', x = 20, y = 0, label = 'y = -1.51 - 0.02x', size = 5) +
+  annotate('text', x = 20, y = -0.3, label = expression(paste(R[adj]^2, ' = 0.01')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p6
+
+summary(lm(data$P50 ~ data$Latitude))
+
+ggplot(data, aes(x = Latitude, y = P50, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Latitude') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  coord_cartesian(xlim = c(0, 30)) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$P50[which(data$Growth.form == 'tree')] ~ data$Latitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$P50[which(data$Growth.form == 'liana')] ~ data$Latitude[which(data$Growth.form == 'liana')]))
+
+## P50 - Longitude
+
+p7 = ggplot(data, aes(x = Longitude, y = P50)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Longitude') + ylab('') +
+  annotate('text', x = 100, y = 0, label = 'y = -1.78 - 0.001x', size = 5) +
+  annotate('text', x = 100, y = -0.3, label = expression(paste(R[adj]^2, ' = 0.01')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p7
+
+summary(lm(data$P50 ~ data$Longitude))
+
+ggplot(data, aes(x = Longitude, y = P50, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Longitude') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$P50[which(data$Growth.form == 'tree')] ~ data$Longitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$P50[which(data$Growth.form == 'liana')] ~ data$Longitude[which(data$Growth.form == 'liana')]))
+
+## P50 - Altitude
+
+p8 = ggplot(data, aes(x = Altitude, y = P50)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Altitude (m)') + ylab('') +
+  coord_cartesian(xlim = c(0, 1000)) +
+  annotate('text', x = 700, y = 0, label = 'y = -1.61 - 0.0004x', size = 5) +
+  annotate('text', x = 700, y = -0.3, label = expression(paste(R[adj]^2, ' = 0.01')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p8
+
+summary(lm(data$P50 ~ data$Altitude))
+
+ggplot(data, aes(x = Altitude, y = P50, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Altitude (m)') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  coord_cartesian(xlim = c(0, 1000)) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$P50[which(data$Growth.form == 'tree')] ~ data$Altitude[which(data$Growth.form == 'tree')]))
+summary(lm(data$P50[which(data$Growth.form == 'liana')] ~ data$Altitude[which(data$Growth.form == 'liana')]))
+
+## P50 - dry season length
+
+p9 = ggplot(data, aes(x = Dry_len, y = P50)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Dry season\nlength (months)') + ylab('') +
+  coord_cartesian(xlim = c(3, 6)) +
+  annotate('text', x = 5, y = 0, label = 'y = -1.13 - 0.13x', size = 5) +
+  annotate('text', x = 5, y = -0.4, label = expression(paste(R[adj]^2, ' = 0.01')), size = 5) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p9
+
+summary(lm(data$P50 ~ data$Dry_len))
+
+ggplot(data, aes(x = Dry_len, y = P50, group = Growth.form, color = Growth.form)) + 
+  geom_point() + geom_smooth(method = 'lm', se = F) +
+  xlab('Dry season\nlength (months)') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  coord_cartesian(xlim = c(3, 6)) +
+  theme_linedraw() +
+  scale_color_discrete(name = 'Growth form') +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), legend.title = element_text(size = 28), legend.text = element_text(size = 26))
+
+summary(lm(data$P50[which(data$Growth.form == 'tree')] ~ data$Dry_len[which(data$Growth.form == 'tree')]))
+summary(lm(data$P50[which(data$Growth.form == 'liana')] ~ data$Dry_len[which(data$Growth.form == 'liana')]))
+
+summary(aov(data$P50[which(data$Growth.form == 'tree')] ~ data$Dry_len[which(data$Growth.form == 'tree')]))
+summary(aov(data$P50[which(data$Growth.form == 'liana')] ~ data$Dry_len[which(data$Growth.form == 'liana')]))
+
+## P50 - field season
+
+p10 = data %>%
+  filter(Meas_szn != '') %>%
+  filter(Meas_szn != 'WetDry') %>%
+  ggplot(aes(x = Meas_szn, y = P50, group = Meas_szn)) + 
+  geom_boxplot() +
+  annotate('text', x = 'Dry', hjust = -0.5, y = 0, label = 't = 2.38, p = 0.02', size = 5) +
+  xlab('Season of \nmeasurement') + ylab('') +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 22), axis.text = element_text(size = 18))
+p10
+
+summary(aov(data$P50 ~ data$Meas_szn))
+t.test(data$P50[which(data$Meas_szn == 'Dry')], data$P50[which(data$Meas_szn == 'Wet')])
+
+data %>%
+  filter(Meas_szn != '') %>%
+  filter(Meas_szn != 'WetDry') %>%
+  ggplot(aes(x = Meas_szn, y = P50, group = Meas_szn)) + 
+  geom_boxplot() + facet_wrap(~Growth.form, labeller = labeller(Growth.form = c('liana' = 'Liana', 'tree' = 'Tree'))) +
+  xlab('Season of measurement') + ylab(expression(paste(P[50], ' (MPa)'))) +
+  theme_linedraw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  theme(axis.title = element_text(size = 28), axis.text = element_text(size = 26), strip.text = element_text(size = 30))
+
+summary(aov(data$P50[which(data$Growth.form == 'tree')] ~ data$Meas_szn[which(data$Growth.form == 'tree')]))
+summary(aov(data$P50[which(data$Growth.form == 'liana')] ~ data$Meas_szn[which(data$Growth.form == 'liana')]))
+t.test(data$P50[which(data$Meas_szn == 'Dry' & data$Growth.form == 'liana')], data$P50[which(data$Meas_szn == 'Wet' & data$Growth.form == 'liana')])
+t.test(data$P50[which(data$Meas_szn == 'Dry' & data$Growth.form == 'tree')], data$P50[which(data$Meas_szn == 'Wet' & data$Growth.form == 'tree')])
+
+# Plot combined liana-tree figures together
+ga = plot_grid(p1, p2, p3, p4, p5,
+               p6, p7, p8, p9, p10,
+               nrow = 2, label_size = 20,
+               labels = c('A', 'B', 'C', 'D', 'E',
+                          'F', 'G', 'H', 'I', 'J'))
+ga
+
+ggsave(ga, filename = 'Plots/SupplementaryFigure17.jpeg', width = 22, height = 10, units = 'in')

@@ -16,6 +16,8 @@ library(rhdf5)
 ## The input here is the derived product that was processed by D Medvigy
 
 # Get attribute name from file
+# Note that this data is unavailable but can be provided upon request
+# The data used in the model are available (the final product of this script)
 h5ls(file = 'vpd_output.h5')
 
 # Read data into R
@@ -62,6 +64,7 @@ VPD = hori_VPD_matrix
 #########
 
 # Read in SWP (in MPa) data  (from Medvigy et al. 2019)
+# This data is also unavailable but the processed data to run the model are available
 data_swp = read.csv('SWP_CostaRica.csv', skip = 1)
 
 # Change column names

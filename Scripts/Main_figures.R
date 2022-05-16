@@ -1,4 +1,4 @@
-## This file creates Figures 1-4 of the main text of the associated manuscript
+## This file creates Figures 1-5 of the main text of the associated manuscript
 
 ## This script requires the following inputs:
     ## 1. full_met_analysis_data_12_July.csv: not given but can be
@@ -31,7 +31,7 @@ library(geomtextpath)
 
 # Clean environment and load new data
 rm(list = ls())
-data = read.csv('full_met_analysis_data_8_Feb.csv')
+data = read.csv('data/full_met_analysis_data_8_Feb.csv')
 
 data$Units_K = as.character(data$Units_K)
 
@@ -135,23 +135,23 @@ ggsave(extendedga, filename = 'Plots/Figure1.pdf',
 #### Figure 2 ####
 ##################
 
-## Before running this section, you must compile tree.NPP.mxh
-## & liana.NPP.mxh from NPP_models.R
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Load parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Load met drivers
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 
 nK = 75000
 ks = c(trees_K$K / 10, lianas_K$K)
 varyk = seq(min(ks), max(ks), length.out = nK)
 
 # Interpolate DBH (and remove highest DBH)
-hori.data.liana.dbh = hori.data.liana.dbh[hori.data.liana.dbh < 29]
-dbhs = seq(min(hori.data.liana.dbh), max(hori.data.liana.dbh), length.out = 50)
+dbhs = seq(liana.dbh.low, liana.dbh.high, length.out = 50)
 
 ## Tree: 90% canopy, mean DBH, BCI
 
@@ -309,7 +309,7 @@ for(i in 1:length(dbhs)){
 }
 
 # Load new climate drivers (Horizontes)
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 
 ## Tree: 90% canopy, mean DBH, Horizontes
 treeouteach = c()
@@ -627,16 +627,16 @@ ggsave(pg, filename = 'Plots/Figure2.pdf', height = 80, width = 180, units = 'mm
 #### Figure 3 ####
 ##################
 
-## Before running this section, you must compile tree.NPP.mxh
-## & liana.NPP.mxh from NPP_models.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Interpolation_mxh_100.RData')
+load('data/Interpolation_mxh_100.RData')
 
 nsite = 100
 nmonth = 12
@@ -651,6 +651,7 @@ SWPs = SWP_interp_100
 ################
 ## Tree plots ##
 ################
+
 # Input values of K
 ks = c(trees_K$K / 10, lianas_K$K)
 Ks = seq(min(ks), max(ks), length.out = nK)
@@ -694,12 +695,12 @@ for(vsite in 1:nsite){
 }
 
 # Save first time to be able to load later (long computation time)
-#save(tree.req, file = 'tree.req.100interp.monthly_200.RData')
+#save(tree.req, file = 'outputs/tree.req.100interp.monthly_200.RData')
 
 # Load once completed once and format
-load(file = 'tree.req.100interp.monthly_200.RData')
+load(file = 'outputs/tree.req.100interp.monthly_200.RData')
 tree.req = tree.req * 0.001
-tree_req_melt = melt(tree.req)
+tree_req_melt = reshape2::melt(tree.req)
 colnames(tree_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -770,11 +771,11 @@ for(vsite in 1:nsite){
 }
 
 # Save and load as before
-#save(liana.req, file = 'liana.req.100interp.monthly_200.RData')
+#save(liana.req, file = 'outputs/liana.req.100interp.monthly_200.RData')
 
-load(file = 'liana.req.100interp.monthly_200.RData')
+load(file = 'outputs/liana.req.100interp.monthly_200.RData')
 liana.req = liana.req * 0.001
-liana_req_melt = melt(liana.req)
+liana_req_melt = reshape2::melt(liana.req)
 colnames(liana_req_melt) = c('VPD_site', 'SWP_site', 'Ksurv')
 
 # Contour plot
@@ -825,22 +826,22 @@ ga = plot_grid(ra4, ra1_fin, ra2_fin, align = 'hv', axis = 'tbrl', nrow = 3,
                labels = c('A', 'B', 'C'),
                label_size = 12)
 
-ggsave(ga, filename = 'Plots/Figure3.jpeg', dpi = 300, height = 220, width = 88, units = 'mm')
+ggsave(ga, filename = 'Plots/Figure3.pdf', dpi = 300, height = 220, width = 88, units = 'mm')
 
 ##################
 #### Figure 4 ####
 ##################
 
-## Before running this section, you must compile tree.NPP.mxh.ca
-## & liana.NPP.mxh.ca from NPP_models_wCO2.R
-
 rm(list = ls())
 
+source('scripts/NPP_models.R')
+source('scripts/NPP_models_wCO2.R')
+
 # Input parameters
-load('param.input.RData')
+load('data/param.input.RData')
 
 # Met drivers
-load('Driver_calc/Horizontes/horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_VPD = VPD
 H_SWP = SWP
 rm(VPD, SWP)
@@ -1042,3 +1043,675 @@ ggplot() +
   theme(plot.margin = unit(c(1, 1, 3, 1), 'lines'))
 
 ggsave('Plots/Figure4.pdf', width = 88, height = 88, units = 'mm', dpi = 300)
+
+##################
+#### Figure 5 ####
+##################
+
+rm(list = ls())
+
+#### Use empirical data to make P50-Slope scenarios
+
+# Load in new data
+hydro_data = read.csv('data/full_met_analysis_data_8_Feb.csv')
+
+# Make units easier to work with
+hydro_data$Units_K = as.character(as.factor(hydro_data$Units_K))
+
+# Convert units for K measurements
+for(i in 1:nrow(hydro_data)){
+  if(hydro_data$Units_K[i] == 'kg/m/s/Mpa'){
+    hydro_data$K[i] = hydro_data$K[i] * 1000 / 18 * 1000
+    hydro_data$Units_K[i] = 'mmol/m/s/Mpa'
+  }else{
+    if(hydro_data$Units_K[i] == 'mol/m/s/Mpa'){
+      hydro_data$K[i] = hydro_data$K[i] * 1000
+      hydro_data$Units_K[i] = 'mmol/m/s/Mpa'
+    }else{
+      if(hydro_data$Units_K[i] == ''){
+        next
+      }else{
+        print('Error with units')
+      }
+    }
+  }
+}
+
+# Remove P50 > -0.75 consistent with Trugman et al. 2020
+hydro_data = hydro_data %>%
+  mutate(P50, replace(P50, P50 > -0.75, NA)) %>%
+  dplyr::select(-P50)
+
+# Rename column with NAs
+colnames(hydro_data)[ncol(hydro_data)] = 'P50'
+
+# Make sure only one unit remains for each
+unique(hydro_data$Units_K)
+unique(hydro_data$Units_P50)
+unique(hydro_data$Units_Slope)
+
+# Log transform variables
+# Notice that P50 is now positive, but it does not change the fundamental relationship
+hydro_data$log_P50 = log(-hydro_data$P50)
+hydro_data$log_K = log(hydro_data$K)
+hydro_data$log_slope = log(hydro_data$Slope)
+
+# Summarize for both growth forms
+all_lm = summary(lm(hydro_data$log_slope ~ hydro_data$log_P50))
+
+#### Use coefficients from linear regression to develop new P50-Slope
+#### combinations for lianas
+
+# liana P50 = -2.25
+slope_2.25 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(2.25)
+slope_2.25 = 10^slope_2.25
+
+# liana P50 = -2.5
+slope_2.5 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(2.5)
+slope_2.5 = 10^slope_2.5
+
+# liana P50 = -3
+slope_3 = all_lm$coefficients[1] + all_lm$coefficients[2] * log(3)
+slope_3 = 10^slope_3
+
+# Input parameters
+load('data/param.input.RData')
+
+# Get NPP functions
+source('scripts/NPP_models_wCO2.R')
+
+# Met drivers
+load('data/bci_met_mxh.RData')
+BCI_VPD = VPD
+BCI_SWP = SWP
+load('data/horizontes_met_mxh.RData')
+H_VPD = VPD
+H_SWP = SWP
+rm(VPD, SWP)
+
+# Indexing months and days
+nmonth = 12
+nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+
+vpdsite = 11
+nK = 75000
+
+# Sequence of multipliers
+mult = seq(1, 2, by = 0.1)
+
+# BCI future scenarios
+BCI_VPD_future = array(, dim = c(12, 24, 11))
+BCI_VPD_future[,,1] = BCI_VPD
+
+for(i in 2:11){
+  BCI_VPD_future[,,i] = BCI_VPD * mult[i]
+}
+
+# Horizontes future scenarios
+H_VPD_future = array(, dim = c(12, 24, 11))
+H_VPD_future[,,1] = H_VPD
+
+for(i in 2:11){
+  H_VPD_future[,,i] = H_VPD * mult[i]
+}
+
+#### Tree - established scenario, no P50 adaptation
+
+# Load saved simulation results from Supplementary figures.R
+load('outputs/tree_req_future_established_200_wCO2.RData')
+
+#### Tree - established scenario, P50 adaptation = -2.25
+
+ks = c(trees_K$K / 10, lianas_K$K)
+Ks = seq(min(ks), max(ks), length.out = nK)
+
+## BCI
+
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.25
+    b2 = -2.25
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_bci_adap = K
+    break
+  }
+}
+
+tree.req_bci_adap = tree.req_bci_adap * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.25
+    b2 = -2.25
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_h_adap = K
+    break
+  }
+}
+
+tree.req_h_adap = tree.req_h_adap * 0.001
+
+#### Liana - established scenario, no P50 adaptation
+
+load('outputs/liana_req_future_established_200_wCO2.RData')
+
+#### Liana - established scenario, P50 adaptation = -2.25
+
+## BCI
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.25
+    b2 = -2.25
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_bci_adap = K
+    break
+  }
+}
+
+liana.req_bci_adap = liana.req_bci_adap * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.25
+    b2 = -2.25
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_h_adap = K
+    break
+  }
+}
+
+liana.req_h_adap = liana.req_h_adap * 0.001
+
+#### Tree - established scenario, P50 adaptation = -2.5
+
+## BCI
+
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.5
+    b2 = -2.5
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_bci_adap_2.5 = K
+    break
+  }
+}
+
+tree.req_bci_adap_2.5 = tree.req_bci_adap_2.5 * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.5
+    b2 = -2.5
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_h_adap_2.5 = K
+    break
+  }
+}
+
+tree.req_h_adap_2.5 = tree.req_h_adap_2.5 * 0.001
+
+#### Liana - established scenario, P50 adaptation = -2.5
+
+## BCI
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.5
+    b2 = -2.5
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_bci_adap_2.5 = K
+    break
+  }
+}
+
+liana.req_bci_adap_2.5 = liana.req_bci_adap_2.5 * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_2.5
+    b2 = -2.5
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_h_adap_2.5 = K
+    break
+  }
+}
+
+liana.req_h_adap_2.5 = liana.req_h_adap_2.5 * 0.001
+
+#### Tree - established scenario, P50 adaptation = -3
+
+## BCI
+
+sens = c()
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_3
+    b2 = -3
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_bci_adap_3 = K
+    break
+  }
+}
+
+tree.req_bci_adap_3 = tree.req_bci_adap_3 * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:nmonth){
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    tree.dbh = mean.hori.data.tree.dbh
+    
+    tot.al = 2 * 100
+    frac.tree.al = 0.6
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      tree.height = tree.b1Ht * tree.dbh^tree.b2Ht
+    }else{
+      tree.height = tree.out[5]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_3
+    b2 = -3
+    tree.out = tree.NPP.mxh.ca(Ca = Ca, tree.dbh = tree.dbh, psis = psis, D_vec = D, tree.k = K, nday = nday, month = month, tot.al = tot.al, frac.tree.al = frac.tree.al, tree.height = tree.height, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = tree.out[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    tree.req_h_adap_3 = K
+    break
+  }
+}
+
+tree.req_h_adap_3 = tree.req_h_adap_3 * 0.001
+
+# Plot with & without P50 adaptation for tree alone
+pl1 = ggplot() +
+  #geom_point(aes(x = mult, y = tree.req_bci, color = 'Wettest')) +
+  #geom_point(aes(x = mult, y = tree.req_h, color = 'Driest')) +
+  geom_line(aes(x = mult, y = tree.req_bci, color = 'Wettest')) +
+  geom_line(aes(x = mult, y = tree.req_h, color = 'Driest')) +
+  geom_point(aes(x = mult[11], y = tree.req_bci_adap, color = 'Wettest', shape = '-2.25')) +
+  geom_point(aes(x = mult[11], y = tree.req_h_adap, color = 'Driest', shape = '-2.25')) +
+  geom_point(aes(x = mult[11], y = tree.req_bci_adap_2.5, color = 'Wettest', shape = '-2.50')) + 
+  geom_point(aes(x = mult[11], y = tree.req_h_adap_2.5, color = 'Driest', shape = '-2.50')) + 
+  geom_point(aes(x = mult[11], y = tree.req_bci_adap_3, color = 'Wettest', shape = '-3.00')) +
+  geom_point(aes(x = mult[11], y = tree.req_h_adap_3, color = 'Driest', shape = '-3.00')) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  theme_linedraw() +
+  scale_color_npg(name = 'Site') +
+  scale_shape_manual(name = expression(paste(P[50],' (MPa)')),
+                     values = c('-2.25' = 17, '-2.50' = 18, '-3.00' = 15)) +
+  ggtitle('Tree') +
+  theme(plot.title = element_text(size = 10, hjust = 0.5), 
+        axis.title = element_text(size = 9), 
+        axis.text = element_text(size = 8), 
+        legend.title = element_text(size = 9), 
+        legend.text = element_text(size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+pl1
+
+#### Liana - established scenario, P50 adaptation = -3
+
+## BCI
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = BCI_SWP[mo]
+    
+    D = BCI_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_3
+    b2 = -3
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_bci_adap_3 = K
+    break
+  }
+}
+
+liana.req_bci_adap_3 = liana.req_bci_adap_3 * 0.001
+
+## Horizontes
+
+for(k in 1:nK){
+  for(mo in 1:12){
+    # Specify Ca = 550
+    Ca = 550
+    nday = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    month = mo
+    
+    dbh = mean.data.liana.dbh
+    
+    tot.al = 2 * 100
+    frac.liana.al = 0.4
+    
+    psis = H_SWP[mo]
+    
+    D = H_VPD_future[mo,,11]
+    
+    if(mo == 1){
+      liana.length = tree.out[2]
+    }else{
+      liana.length = lianaout[4]
+    }
+    K = Ks[k]
+    # Specify b1 & b2
+    b1 = slope_3
+    b2 = -3
+    lianaout = liana.NPP.mxh.ca(Ca = Ca, dbh = dbh, psis = psis, D_vec = D, liana.k = K, SLA = NULL, nday = nday, month = month, tot.al = tot.al, frac.liana.al = frac.liana.al, liana.length = liana.length, Vm = NULL, b1 = b1, b2 = b2)
+    sens[mo] = lianaout[1]
+  }
+  sum = sum(sens)
+  if(sum > 0){
+    liana.req_h_adap_3 = K
+    break
+  }
+}
+
+liana.req_h_adap_3 = liana.req_h_adap_3 * 0.001
+
+pl2 = ggplot() +
+  geom_line(aes(x = mult, y = liana.req_bci, color = 'Wettest')) +
+  geom_line(aes(x = mult, y = liana.req_h, color = 'Driest')) +
+  geom_point(aes(x = mult[11], y = liana.req_bci_adap, color = 'Wettest', shape = '-2.25')) +
+  geom_point(aes(x = mult[11], y = liana.req_h_adap, color = 'Driest', shape = '-2.25')) +
+  geom_point(aes(x = mult[11], y = liana.req_bci_adap_2.5, color = 'Wettest', shape = '-2.50')) +
+  geom_point(aes(x = mult[11], y = liana.req_h_adap_2.5, color = 'Driest', shape = '-2.50')) +
+  geom_point(aes(x = mult[11], y = liana.req_bci_adap_3, color = 'Wettest', shape = '-3.00')) +
+  geom_point(aes(x = mult[11], y = liana.req_h_adap_3, color = 'Driest', shape = '-3.00')) +
+  xlab('Increase from present') + ylab(bquote(K['w,max'](req)~~(mol~m^-1~s^-1~MPa^-1))) +
+  theme_linedraw() +
+  scale_color_npg(name = 'Site') +
+  scale_shape_manual(name = expression(paste(P[50],' (MPa)')),
+                     values = c('-2.25' = 17, '-2.50' = 18, '-3.00' = 15)) +
+  ggtitle('Liana') +
+  theme(plot.title = element_text(size = 10, hjust = 0.5), 
+        axis.title = element_text(size = 9), 
+        axis.text = element_text(size = 8), 
+        legend.title = element_text(size = 9), 
+        legend.text = element_text(size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+pl2
+
+get_legend<-function(myggplot){
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend = get_legend(pl2)
+
+ga = plot_grid(pl1 + theme(legend.position = 'none'), 
+               pl2 + theme(legend.position = 'none'), 
+               legend, nrow = 1, 
+               rel_widths = c(2.3, 2.3, 0.7),
+               labels = c('A', 'B', ''),
+               label_size = 12)
+
+ggsave(ga, filename = 'Plots/Figure5.pdf', width = 180, height = 90, units = 'mm')

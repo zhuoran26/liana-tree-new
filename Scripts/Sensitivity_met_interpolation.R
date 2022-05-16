@@ -14,13 +14,13 @@ rm(list = ls())
 
 # Load BCI data with dimensions month x hour
 # Processed elsewhere
-load('bci_met_mxh.RData')
+load('data/bci_met_mxh.RData')
 BCI_SWP = SWP
 BCI_VPD = VPD
 
 # Load Horizontes data with dimensions month x hour
 # Processed elsewhere
-load('horizontes_met_mxh.RData')
+load('data/horizontes_met_mxh.RData')
 H_SWP = SWP
 H_VPD = VPD
 
@@ -51,4 +51,4 @@ for(i in 1:12){
 ## Save ##
 ##########
 
-save(SWP_interp_100, VPD_interp_100, file = 'Interpolation_mxh_100.RData')
+save(SWP_interp_100, VPD_interp_100, file = 'data/Interpolation_mxh_100.RData')

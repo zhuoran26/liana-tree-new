@@ -22,6 +22,7 @@ library(lubridate)
 ## such that all leaves would be exposed to the upper most part of the canopy
 
 # Load in data
+# These data are unavailable but the processed data that run the model are available
 bci_temp = read.csv('bci_elect_48m_at/bci_lutz48m_at_elect.csv')
 bci_rh = read.csv('bci_elect_48m_rh/bci_lutz48m_rh_elect.csv')
 
@@ -91,6 +92,7 @@ VPD = bci_vpd_matrix
 #########
 
 # Read in SWP (in MPa) data  (from Levy-Varon et al. 2019)
+# Note that these data are not available but the processed data to run the model are
 data_swp = read.csv('SWP_BCI.csv', skip = 1)
 
 
