@@ -1,9 +1,9 @@
 ## This file creates Figures 1-5 of the main text of the associated manuscript
 
 ## This script requires the following inputs:
-    ## 1. full_met_analysis_data_8_Feb.csv: not given but can be
-    ## recreated following the steps detailed in the Methods
-    ## 2. param.input.RData: created in Input_parameter_est.R
+    ## 1. full_met_analysis_data_8_Feb.csv: available from the fighsare repository associated
+    ##    associated with this manuscript
+    ## 2. param.input.RData: created in Compile_parameters.R
     ## 3. bci_met_mxh.RData: created in BCI_met_process.R
     ## 4. horizontes_met_mxh.RData: created in Horizontes_met_process.R
     ## 5. Interpolation_mxh_100.RData: created in Sensitivity_met_interpolation.R

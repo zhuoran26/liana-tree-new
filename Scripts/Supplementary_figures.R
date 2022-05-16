@@ -1,21 +1,18 @@
 ## This script provides the code for all the supplementary figures
-## including Extended Data Figures & Supplementary Figures
+## including Supplementary Figures and Tables
 
 ## This script requires the following inputs:
-    ## 1. Supplement_parameters.csv: spreadsheet created in Excel to 
-    ## create Extended Data Table 4
-    ## 2. Sources_2.csv: spreadsheet created in Excel to create
-    ## Extended Data Table 3
-    ## 3. full_met_analysis_data_8_Feb.csv: not given but can be
-    ## recreated following the steps detailed in the Methods
-    ## 4. param.input.RData: created in Input_parameter_est.R
-    ## 5. bci_met_mxh.RData: created in BCI_met_process.R
-    ## 6. horizontes_met_mxh.RData: created in Horizontes_met_process.R
-    ## 7. filtered_TRY_analysis_16-03-21.csv: created in TRY_analysis1.R and 
-    ## TRY_analysis2.R and filtered by hand
-    ## 8. interpolation_mxh_100.RData: created in Sensitivity_met_interpolation.R
-    ## 9.  tree.NPP.mxh & liana.NPP.mxh: compiled in NPP_models.R
-    ## 10. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
+    ## 1. full_met_analysis_data_8_Feb.csv: available from the figshare repository associated
+    ##    with this manuscript
+    ## 2. param.input.RData: created in Compile_parameters.R
+    ## 3. bci_met_mxh.RData: created in BCI_met_process.R
+    ## 4. horizontes_met_mxh.RData: created in Horizontes_met_process.R
+    ## 5. filtered_TRY_analysis_16-03-21.csv: created in TRY_analysis1.R and 
+    ##    TRY_analysis2.R and filtered by hand. Available in the figshare repository
+    ##    associated with this manuscript
+    ## 5. interpolation_mxh_100.RData: created in Sensitivity_met_interpolation.R
+    ## 7.  tree.NPP.mxh & liana.NPP.mxh: compiled in NPP_models.R
+    ## 8. tree.NPP.mxh.ca & liana.NPP.mxh.ca: compiled in NPP_models_wCO2.R
 
 ## Author: AM Willson
 ## Date modified: 11 October 2021
