@@ -39,12 +39,14 @@ frac.liana.al = 0.1 #percentage of making leaf area for liana
 #set tree dbh and make liana dbh equals to tree height
 tree.dbh = mean.hori.data.tree.dbh
 liana.length = (tree.b1Ht * tree.dbh^tree.b2Ht)
+each_day = c(rep(0,times=6),rep(1, times=12),rep(0,times=6))
+july_day_light = c(rep(each_day, times=31))
 
 
 #This model calculates liana NPP (photosynthesis rate and respiration rate) based on 
 #meteorological variables and set parameters from previous literature. 
 liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL, 
-                             b2 = NULL,nday, month,tot.al, frac.liana.al, 
+                             b2 = NULL,nday, month,hour,tot.al, frac.liana.al, 
                              liana.length, Vm = NULL){
   
   #calculate or input more the constants needed for the model
@@ -68,7 +70,7 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
   D=D_vec
   # Loop through 1 day
   # Note hour remark above
-  for(hour in 1:24){
+  for(hour in 1:length(july_day_light)){
     
     rG = 0.3 # Growth respiration, default
     q = 1.89 # Fine root:leaf ratio, default
@@ -159,13 +161,13 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
     
     #make A based on if there is no sunlight or not
     # If it's night,
-    if(hour %in% c(1:6,19:24)){
+    if(july_day_light[hour] ==0){
       # GPP = 0
       A1_h[hour] = 0
     }
     
     # If it's day
-    if(hour %in% c(7:18)){
+    if(july_day_light[hour] ==1){
       # multiply instantaneous GPP by 3600 seconds (in 1 hr)
       A1_h[hour] = A1 * 3600
     }
@@ -200,13 +202,13 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
   rp_turn = rp_h - rp_lost
   
   # NPP under non-water-stressed conditions, nday[month] changed to 31, what is this now? changed to hourly?
-  NPP_prelim = ((1 - rG) * (A1_h * liana.al - rd_h * (liana.al) - 
+  NPP_prelim = ((1 - rG) * (A1_h[hour] * liana.al - rd_h * (liana.al) - 
                               rr_h - rx_turn - rp_turn) * 1e-9 * 12)#made change
   
   # Allows leaves to drop if water stress is present, nday[month] changed to 31
   if(NPP_prelim < 0){
     liana.al = 0
-    NPP = ((1 - rG) * (A1_h * liana.al - rd_h * (liana.al) - 
+    NPP = ((1 - rG) * (A1_h[hour] * liana.al - rd_h * (liana.al) - 
                          rr_h - rx_turn - rp_turn) * 1 * 10^-9 * 12)#made change
   }else{
     NPP = NPP_prelim
@@ -256,7 +258,7 @@ frac.liana.al = 0.1 #percentage of making leaf area for liana
 tree.dbh = mean.hori.data.tree.dbh
 liana.length = (tree.b1Ht * tree.dbh^tree.b2Ht)
 
-#make k equals to the weird one
+#get one of the K from all the 51 Ks
 K=680.55556
 
 july.npp.hour = rep(0,length(july_vpd))
@@ -266,7 +268,7 @@ for (i in 1:length(july_vpd)){
   psis = SWP[month] 
   D = july_vpd[i]
   
-  july.npp.hour[i] = liana.NPP.mxh.hour(dbh = dbh, psis = psis, D_vec = D, liana.k = K, tot.al = tot.al, nday=nday,month=month,
-  frac.liana.al = frac.liana.al, liana.length = liana.length)
+  test = liana.NPP.mxh.hour(dbh = dbh, liana.k = K, tot.al = tot.al, nday=nday,month=month,
+  frac.liana.al = frac.liana.al, liana.length = liana.length,hour=july_day_light,psis = SWP[7],D_vec=july_vpd )
   
 }
