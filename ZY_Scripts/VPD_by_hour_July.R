@@ -39,14 +39,15 @@ frac.liana.al = 0.1 #percentage of making leaf area for liana
 #set tree dbh and make liana dbh equals to tree height
 tree.dbh = mean.hori.data.tree.dbh
 liana.length = (tree.b1Ht * tree.dbh^tree.b2Ht)
+#add a column to indicate daylight
 each_day = c(rep(0,times=6),rep(1, times=12),rep(0,times=6))
 july_day_light = c(rep(each_day, times=31))
-
+day_light = july_day_light
 
 #This model calculates liana NPP (photosynthesis rate and respiration rate) based on 
 #meteorological variables and set parameters from previous literature. 
 liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL, 
-                             b2 = NULL,nday, month,hour,tot.al, frac.liana.al, 
+                             b2 = NULL,nday, month,day_light,tot.al, frac.liana.al, 
                              liana.length, Vm = NULL){
   
   #calculate or input more the constants needed for the model
@@ -67,10 +68,10 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
   
   #D is just one value now
   #D = movavg(D_vec, 2, type = 's') # Smoothed, hourly VPD
-  D=D_vec
+  D=D_vec[i]
   # Loop through 1 day
   # Note hour remark above
-  for(hour in 1:length(july_day_light)){
+  #for(hour in 1:length(D)){
     
     rG = 0.3 # Growth respiration, default
     q = 1.89 # Fine root:leaf ratio, default
@@ -131,11 +132,11 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
     # equations from Trugman et al. (2018)
     T1 = 1 / (Ca - gamma_star)
     T2 = 1 / (Ca + km)
-    g = a1 / ((Ca - gamma) * (1 + (D[hour] / D0)))
+    g = a1 / ((Ca - gamma) * (1 + (D  / D0)))
     V = Vm * ((Ca - gamma_star) / (Ca + km))
     Z = (ap / Lp) / (1 + ((ap / Lp) * (Lx / liana.ax)) * (Lx * ar + liana.ax * Lr) / (Lx * ar))
     #smoothed VPD are used there to calcualte photosynthesis (A) rate
-    D2 = D[hour] / 101 * 1.6
+    D2 = D  / 101 * 1.6
     
     # All equations as default 
     
@@ -154,24 +155,24 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
     
     # Multiply each respiration component by 3600 seconds (in 1 hr), now we have all the respiration
     #rd, rx, rp, rr are caculated above
-    rd_h[hour] = rd * 3600
-    rr_h[hour] = rr * 3600
-    rx_h[hour] = rx * 3600
-    rp_h[hour] = rp * 3600
+    rd_h = rd * 3600
+    rr_h = rr * 3600
+    rx_h  = rx * 3600
+    rp_h = rp * 3600
     
     #make A based on if there is no sunlight or not
     # If it's night,
-    if(july_day_light[hour] ==0){
+    if(day_light[i]  ==0){
       # GPP = 0
-      A1_h[hour] = 0
+      A1_h  = 0
     }
     
     # If it's day
-    if(july_day_light[hour] ==1){
+    if(day_light[i]  ==1){
       # multiply instantaneous GPP by 3600 seconds (in 1 hr)
-      A1_h[hour] = A1 * 3600
+      A1_h  = A1 * 3600
     }
-  }
+  #}
   
   # Sum respiration for each hour in one day
   # Equivalent to umol/h * 1 h = umol
@@ -184,58 +185,58 @@ liana.NPP.mxh.hour = function(dbh, psis, D_vec, liana.k, SLA = NULL, b1 = NULL,
   #A1_d = sum(A1_h)
   
   # Monthly turnover & NPP changed to hourly turnover
-  stem.turn = 0.1 / 366/24 #nday[month] #yearly turnover / months
+  stem.turn  = 0.1 / 366/24 #nday[month] #yearly turnover / months
   
-  Lx_lost = Lx * stem.turn #fraction of stem lost
-  Lx_turn = Lx - Lx_lost
+  Lx_lost  = Lx * stem.turn #fraction of stem lost
+  Lx_turn  = Lx - Lx_lost 
   
   # Calculates new xylem respiration by subtracting the proportion lost
-  rx_lost = rx * (Lx_lost * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6 * (X / Xstar)
-  rx_lost = rx_lost * 3600
+  rx_lost  = rx  * (Lx_lost  * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6 * (X / Xstar)
+  rx_lost  = rx_lost  * 3600
   #rx_lost = rx_lost * 24 #this is now daily
-  rx_turn = rx_h - rx_lost
+  rx_turn  = rx_h  - rx_lost 
   
   # Calculates new phloem respiration by subtracting the proportion lost
-  rp_lost = rp * (Lx_lost * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6
-  rp_lost = rp_lost * 3600
+  rp_lost  = rp  * (Lx_lost  * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6
+  rp_lost  = rp_lost  * 3600
   #rp_lost = rp_lost * 24 #this is now daily
-  rp_turn = rp_h - rp_lost
+  rp_turn  = rp_h  - rp_lost 
   
   # NPP under non-water-stressed conditions, nday[month] changed to 31, what is this now? changed to hourly?
-  NPP_prelim = ((1 - rG) * (A1_h[hour] * liana.al - rd_h * (liana.al) - 
-                              rr_h - rx_turn - rp_turn) * 1e-9 * 12)#made change
+  NPP_prelim  = ((1 - rG) * (A1_h  * liana.al - rd_h  * (liana.al) - 
+                              rr_h  - rx_turn  - rp_turn ) * 1e-9 * 12)#made change
   
   # Allows leaves to drop if water stress is present, nday[month] changed to 31
   if(NPP_prelim < 0){
     liana.al = 0
-    NPP = ((1 - rG) * (A1_h[hour] * liana.al - rd_h * (liana.al) - 
+    NPP  = ((1 - rG) * (A1_h* liana.al - rd_h * (liana.al) - 
                          rr_h - rx_turn - rp_turn) * 1 * 10^-9 * 12)#made change
   }else{
-    NPP = NPP_prelim
+    NPP  = NPP_prelim
   }
   
   if(NPP < 0){
-    stem.turn = 0.162 /366/24 #made change
+    stem.turn  = 0.162 /366/24 #made change
     
-    Lx_lost = Lx * stem.turn
-    Lx_turn = Lx - Lx_lost
+    Lx_lost  = Lx * stem.turn 
+    Lx_turn  = Lx - Lx_lost 
     
-    rx_lost = rx * (Lx_lost * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6 * (X / Xstar)
-    rx_lost = rx_lost * 3600
+    rx_lost  = rx * (Lx_lost * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6 * (X / Xstar)
+    rx_lost  = rx_lost * 3600
     #rx_lost = rx_lost * 24
     #rx_lost = rx_lost * nday[month]
-    rx_turn = rx_h - rx_lost 
+    rx_turn  = rx_h - rx_lost 
     
-    rp_lost = rp * (Lx_lost * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6
-    rp_lost = rp_lost * 3600
+    rp_lost  = rp  * (Lx_lost  * pi * (dbh / 100)) / (122 * 24 * 3600) * 10^6
+    rp_lost  = rp_lost  * 3600
     #rp_lost = rp_lost * 24
     #rp_lost = rp_lost * nday[month]
-    rp_turn = rp_h - rp_lost
+    rp_turn  = rp_h  - rp_lost 
     
     # Calculate NPP, rG is just a fraction, remove things like /nday[month]
-    NPP = (1 - rG) * (A1_h * liana.al - rd_h * (liana.al) - rr_h - rx_turn - rp_turn) * 1e-9 * 12
+    NPP  = (1 - rG) * (A1_h  * liana.al - rd_h  * (liana.al) - rr_h  - rx_turn  - rp_turn ) * 1e-9 * 12
   }
-  return(c(NPP, liana.al, stem.turn, Lx_turn, A1))
+  return(NPP)
 }
 
 head(vpd_year)
@@ -259,16 +260,38 @@ tree.dbh = mean.hori.data.tree.dbh
 liana.length = (tree.b1Ht * tree.dbh^tree.b2Ht)
 
 #get one of the K from all the 51 Ks
-K=680.55556
+K=5805.55556
+
+#run thr first value
+#rm(july.npp.hour)
+#july.npp.hour = liana.NPP.mxh.hour(dbh = dbh, liana.k = K, tot.al = tot.al, nday=nday,month=month,
+                                   #frac.liana.al = frac.liana.al, liana.length = liana.length,day_light=july_day_light[1],psis = SWP[7],D_vec=july_vpd[1] )
 
 july.npp.hour = rep(0,length(july_vpd))
-#Error in if (NPP_prelim < 0) { : the condition has length > 1
 
 for (i in 1:length(july_vpd)){
-  psis = SWP[month] 
-  D = july_vpd[i]
-  
-  test = liana.NPP.mxh.hour(dbh = dbh, liana.k = K, tot.al = tot.al, nday=nday,month=month,
-  frac.liana.al = frac.liana.al, liana.length = liana.length,hour=july_day_light,psis = SWP[7],D_vec=july_vpd )
+
+  july.npp.hour[i] = liana.NPP.mxh.hour(dbh = dbh, liana.k = K, tot.al = tot.al, nday=nday,month=month,
+  frac.liana.al = frac.liana.al, liana.length = liana.length,day_light=july_day_light,psis = SWP[7],D_vec=july_vpd)
   
 }
+
+plot(july_vpd,july.npp.hour)
+
+hist(july.npp.hour)
+summary(july.npp.hour)
+
+
+######question: are all the negative points from night? Let's see!
+rm(test)
+test <- cbind(july.npp.hour, july_vpd,july_day_light)
+test <-as.data.frame(test)
+day_npp <- subset(test, july_day_light=="1")
+night_npp <- subset(test, july_day_light=="0")
+plot(july_vpd,july.npp.hour)
+plot(day_npp$july_vpd,day_npp$july.npp.hour)
+plot(night_npp$july_vpd,night_npp$july.npp.hour)
+#so yes, during the day, we can see change
+
+
+
