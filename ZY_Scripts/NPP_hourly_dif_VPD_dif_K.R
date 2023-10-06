@@ -21,9 +21,9 @@ month = c(1:12)
 SWP_year <- cbind(SWP,month)
 SWP_year <- data.frame(SWP_year)
 vpd_year <- left_join(vpd_year,SWP_year)
-year_vpd_org = c(c(rep(VPD[1,], times=31)),c(rep(VPD[2,], times=29)),c(rep(VPD[3,], times=31)),c(rep(VPD[4,], times=30)),
-             c(rep(VPD[5,], times=31)),c(rep(VPD[6,], times=30)),c(rep(VPD[7,], times=31)),c(rep(VPD[8,], times=31)),
-             c(rep(VPD[9,], times=30)),c(rep(VPD[10,], times=31)),c(rep(VPD[11,], times=30)),c(rep(VPD[12,], times=31)))
+year_vpd_org = c(c(rep(vpd_month[1,], times=31)),c(rep(vpd_month[2,], times=29)),c(rep(vpd_month[3,], times=31)),c(rep(vpd_month[4,], times=30)),
+             c(rep(vpd_month[5,], times=31)),c(rep(vpd_month[6,], times=30)),c(rep(vpd_month[7,], times=31)),c(rep(vpd_month[8,], times=31)),
+             c(rep(vpd_month[9,], times=30)),c(rep(vpd_month[10,], times=31)),c(rep(vpd_month[11,], times=30)),c(rep(vpd_month[12,], times=31)))
 
 vpd_year <- cbind(vpd_year,year_vpd_org,year_day_light)
 liana_npp_org_VPD = rep(0,times=length(year_day_light))
@@ -114,6 +114,10 @@ legend(0, 2, legend=c("original", "variation"),
        col=c("black", "green"), lty=1:2, cex=0.8)
 
 
+
+plot(liana.data$vpd_pa,liana_npp_var_VPD_low_k)
+plot(liana.data$vpd_pa,liana_npp_var_VPD_mid_k)
+plot(liana.data$vpd_pa,liana_npp_var_VPD_high_k)
 
 df[[text]] <- ifelse(df$season == i, 1, 0)
 rm(dt)
