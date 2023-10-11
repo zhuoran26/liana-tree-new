@@ -1,4 +1,3 @@
-#checked what K is used in these codes
 library(dplyr)
 library(ggplot2)
 library(ggsci)
@@ -19,14 +18,16 @@ library(geomtextpath)
 rm(list = ls())
 data = read.csv('/Users/zhuoranyu/Desktop/liana-tree-test/data/full_met_analysis_data_8_Feb.csv')
 
-head(data)
+#modified:
+data.original =read.csv('/Users/zhuoranyu/Desktop/liana-tree-test/data/full_met_analysis_data_8_Feb.csv')
+###
 data$Units_K = as.character(data$Units_K)
 
 # Convert to consistent units
 for(i in 1:nrow(data)){
   if(data$Units_K[i] == 'kg/m/s/Mpa'){
     # Convert from kg to mmol H2O
-    data$K[i] = data$K[i] * 1000 / 18 * 1000
+    data$K[i] = data$K[i] * 1000 / 18 * 1000 #divided by 18 is to turn to mol, first *1000 is kg to g, second *1000 is mol to mmol
     data$Units_K[i] = 'mmol/m/s/Mpa'
   }else{
     if(data$Units_K[i] == 'mol/m/s/Mpa'){
@@ -42,8 +43,8 @@ for(i in 1:nrow(data)){
 
 data$Units_K = as.factor(data$Units_K)
 
-# Make column for mol/m/s/MPa
-data$K.mol.m.s.MPa = data$K * 0.001
+# Make column for mol/m/s/MPa 
+data$K.mol.m.s.MPa = data$K * 0.001 #here change everything to mol!
 
 # Remove P50 > -0.75 consistent with Trugman et al. 2020
 data = data %>%
@@ -61,10 +62,29 @@ length(which(data$Growth.form == 'tree' & !is.na(data$P50)))
 length(which(data$Growth.form == 'liana' & !is.na(data$Slope)))
 length(which(data$Growth.form == 'tree' & !is.na(data$Slope)))
 
-liana.dif.K <- subset(data, Growth.form == 'liana')
-liana.dif.K.Mpa <- liana.dif.K$K.mol.m.s.MPa
+# Violin and boxplots overlaid with jittered points
+pl1 = data %>%
+  dplyr::select(Growth.form, K.mol.m.s.MPa) %>%
+  ggplot(aes(x = Growth.form, y = K.mol.m.s.MPa, fill = Growth.form)) +
+  geom_violin(alpha = 0.5, show.legend = F) +
+  stat_summary(fun = median, geom = 'point', shape = 3, show.legend = F, size = 1.5) +
+  theme_linedraw() +
+  xlab('') + ylab((bquote(K['s,max']~(mol~m^-1~s^-1~MPa^-1)))) +
+  scale_fill_npg(name = 'PFT') +
+  scale_x_discrete(labels = c('Liana\nn = 51', 'Tree\nn = 103')) +
+  ggtitle('Hydraulic conductivity') +
+  theme(plot.title = element_text(hjust = 0.5, size = 10), 
+        axis.title = element_text(size = 10), 
+        axis.text = element_text(size = 8),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
 
-summary(liana.dif.K.Mpa)
+pl1
+#modified
+
+liana.data <- subset(data, Growth.form == 'liana')
+liana.k.in.plot <- liana.data$K.mol.m.s.MPa
+liana_K_mmol <- liana.data$K
 
 #NOTE: the first violin plot used K.mol.m.s.MPa
 
@@ -79,19 +99,11 @@ nK = 75000
 ks = c(trees_K$K / 10, lianas_K$K)
 #what is lianas_K$K here
 lianas_K$K
-
+liana_K_mmol
 
 varyk = seq(min(ks), max(ks), length.out = nK)
 range(varyk)
-#make units the same
-liana.dif.K.kpa <-liana.dif.K.Mpa*1000
-range(varyk)
-range(liana.dif.K.Mpa)
-summary(lianas_K$K)
-length(lianas_K$K)
-summary(liana.dif.K.kpa)
-length(liana.dif.K.kpa)
 
-#So the lianas_K$K is all the 51 dif liana values
+#So the lianas_K$K is all the 51 dif liana values in mmol/m/s/Mpa
 
 
